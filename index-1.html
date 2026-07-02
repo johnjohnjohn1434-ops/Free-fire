@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fire Fan Hub — Home</title>
+<meta name="description" content="Free Fire India — News, Events, Redeem Codes, Weapons, Characters, Live Stream & more.">
+
+<style>
+  :root{
+    --bg:            #0d0f11;
+    --bg-raised:     #15181b;
+    --bg-card:       #1a1e22;
+    --line:          #2a2f34;
+    --amber:         #ffb020;
+    --amber-dim:     #7a5615;
+    --red-alert:     #ff4b3e;
+    --text:          #eef1f3;
+    --text-dim:      #8b939a;
+    --text-faint:    #565d63;
+    --font-display:  'Rajdhani', 'Oswald', 'Arial Narrow', sans-serif;
+    --font-body:     'Inter', 'Segoe UI', sans-serif;
+    --font-mono:     'JetBrains Mono', 'Consolas', monospace;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  ul{ list-style:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- corner-bracket signature element ---------- */
+  .bracket{
+    position:relative;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+  }
+  .bracket::before, .bracket::after{
+    content:"";
+    position:absolute;
+    width:14px; height:14px;
+    border:2px solid var(--amber);
+    opacity:.85;
+  }
+  .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{
+    content:""; width:16px; height:1px; background:var(--amber);
+  }
+
+  /* ---------- header / nav ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(13,15,17,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .navbar{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px;
+  }
+  .brand{
+    font-family:var(--font-display);
+    font-weight:700; font-size:22px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .brand .flame{ color:var(--amber); }
+
+  .nav-links{
+    display:flex; align-items:center; gap:2px;
+  }
+  .nav-links a{
+    font-family:var(--font-mono);
+    font-size:12.5px; letter-spacing:.03em; text-transform:uppercase;
+    color:var(--text-dim);
+    padding:10px 12px;
+    border-bottom:2px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{ color:var(--text); }
+  .nav-links a.active{ color:var(--amber); border-color:var(--amber); }
+
+  .nav-right{ display:flex; align-items:center; gap:10px; }
+
+  .icon-btn{
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; border:1px solid var(--line); color:var(--text-dim);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .icon-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  .icon-btn svg{ width:18px; height:18px; }
+
+  .btn-primary{
+    font-family:var(--font-mono);
+    font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--amber); color:#151505;
+    padding:10px 18px;
+    border:none;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    transition:filter .15s ease;
+  }
+  .btn-primary:hover{ filter:brightness(1.1); }
+
+  .btn-ghost{
+    font-family:var(--font-mono);
+    font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    background:transparent; color:var(--text);
+    padding:9px 16px;
+    border:1px solid var(--line);
+  }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+
+  .menu-toggle{ display:none; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:78vh;
+    display:flex; align-items:flex-end;
+    background:
+      linear-gradient(180deg, rgba(13,15,17,.15) 0%, rgba(13,15,17,.55) 55%, var(--bg) 100%),
+      radial-gradient(ellipse at 30% 20%, rgba(255,176,32,.14), transparent 55%),
+      linear-gradient(135deg,#1c1f22,#0d0f11);
+    overflow:hidden;
+    border-bottom:1px solid var(--line);
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,176,32,.035) 0 1px, transparent 1px 80px);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; padding:60px 0 56px; width:100%; }
+  .hero-tag{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--red-alert);
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid rgba(255,75,62,.4);
+    background:rgba(255,75,62,.08);
+    padding:6px 12px;
+    margin-bottom:22px;
+  }
+  .hero-tag .dot{ width:6px; height:6px; border-radius:50%; background:var(--red-alert); animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(40px,7vw,84px);
+    line-height:.95; letter-spacing:.01em;
+    text-transform:uppercase;
+    max-width:900px;
+  }
+  .hero h1 .accent{ color:var(--amber); }
+
+  .hero-meta{
+    display:flex; gap:28px; margin-top:24px; flex-wrap:wrap;
+    font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim);
+  }
+  .hero-meta strong{ color:var(--text); }
+
+  .hero-actions{ display:flex; gap:12px; margin-top:32px; flex-wrap:wrap; }
+
+  /* ---------- section shell ---------- */
+  section{ padding:60px 0; border-bottom:1px solid var(--line); }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:28px; flex-wrap:wrap; gap:10px;
+  }
+  .section-head h2{
+    font-family:var(--font-display); font-weight:700; font-size:26px;
+    text-transform:uppercase; letter-spacing:.02em;
+  }
+  .view-all{ font-family:var(--font-mono); font-size:12px; color:var(--amber); letter-spacing:.05em; text-transform:uppercase; }
+  .view-all:hover{ text-decoration:underline; }
+
+  /* ---------- grids ---------- */
+  .grid-news{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .grid-2{ display:grid; grid-template-columns:1.3fr .7fr; gap:16px; }
+
+  .card{ overflow:hidden; }
+  .card .thumb{ aspect-ratio:16/10; background:linear-gradient(135deg,#22262a,#141618); position:relative; overflow:hidden; }
+  .card .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .card .body{ padding:14px 16px 16px; }
+  .card .date{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; }
+  .card h3{ font-family:var(--font-display); font-weight:600; font-size:17px; margin-top:6px; line-height:1.25; }
+  .card p{ font-size:13px; color:var(--text-dim); margin-top:8px; }
+
+  .badge{
+    position:absolute; top:10px; left:10px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--amber); color:#151505; padding:4px 8px;
+  }
+  .badge.live{ background:var(--red-alert); color:#fff; display:flex; align-items:center; gap:5px; }
+  .badge.live .dot{ width:5px; height:5px; border-radius:50%; background:#fff; animation:pulse 1.4s infinite; }
+
+  /* redeem code strip */
+  .code-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; border-bottom:1px solid var(--line);
+    gap:12px; flex-wrap:wrap;
+  }
+  .code-row:last-child{ border-bottom:none; }
+  .code-val{ font-family:var(--font-mono); font-size:14px; font-weight:500; letter-spacing:.03em; }
+  .code-meta{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:3px; }
+
+  /* live stream card */
+  .live-card{ position:relative; }
+  .live-card .thumb{ aspect-ratio:16/9; }
+  .live-stat{
+    position:absolute; bottom:10px; left:10px;
+    font-family:var(--font-mono); font-size:11px; color:#fff;
+    background:rgba(0,0,0,.55); padding:4px 8px; display:flex; align-items:center; gap:6px;
+  }
+
+  /* footer */
+  footer{ padding:48px 0 28px; }
+  .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:32px; margin-bottom:36px; }
+  footer h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
+  footer li{ margin-bottom:9px; font-size:13.5px; color:var(--text-dim); }
+  footer li a:hover{ color:var(--amber); }
+  .foot-brand p{ color:var(--text-dim); font-size:13.5px; margin-top:10px; max-width:340px; }
+  .foot-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:24px; border-top:1px solid var(--line);
+    font-family:var(--font-mono); font-size:11px; color:var(--text-faint); flex-wrap:wrap; gap:10px;
+  }
+  .social-row{ display:flex; gap:10px; }
+
+  /* skeleton loading */
+  .skel{ background:linear-gradient(90deg,var(--bg-card) 0%,#23282d 50%,var(--bg-card) 100%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+  @keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+  /* ---------- responsive ---------- */
+  @media(max-width:1080px){
+    .nav-links{ display:none; }
+    .menu-toggle{ display:flex; }
+    .grid-news{ grid-template-columns:repeat(2,1fr); }
+    .grid-3{ grid-template-columns:repeat(2,1fr); }
+    .grid-2{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media(max-width:560px){
+    .grid-news{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr; }
+    .hero-meta{ gap:16px; }
+  }
+
+  .mobile-menu{
+    display:none; flex-direction:column;
+    background:var(--bg-raised); border-bottom:1px solid var(--line);
+  }
+  .mobile-menu.open{ display:flex; }
+  .mobile-menu a{
+    padding:14px 20px; border-bottom:1px solid var(--line);
+    font-family:var(--font-mono); font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim);
+  }
+  .mobile-menu a.active{ color:var(--amber); }
+
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER / NAV ================= -->
+<header>
+  <div class="wrap navbar">
+    <a href="index.html" class="brand">
+      <svg class="flame" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/>
+      </svg>
+      FREE FIRE HUB
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="active">Home</a>
+      <a href="news.html">News</a>
+      <a href="events.html">Events</a>
+      <a href="redeem-codes.html">Redeem</a>
+      <a href="sensitivity.html">Sensitivity</a>
+      <a href="weapons.html">Weapons</a>
+      <a href="characters.html">Characters</a>
+      <a href="bundles.html">Bundles</a>
+      <a href="videos.html">Videos</a>
+      <a href="live.html">Live</a>
+      <a href="tournaments.html">Tournaments</a>
+      <a href="community.html">Community</a>
+    </nav>
+
+    <div class="nav-right">
+      <button class="icon-btn" id="searchBtn" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+      </button>
+      <a href="login.html" class="btn-ghost" id="authBtn">Login</a>
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="active">Home</a>
+    <a href="news.html">News</a>
+    <a href="events.html">Events</a>
+    <a href="redeem-codes.html">Redeem Codes</a>
+    <a href="sensitivity.html">Sensitivity</a>
+    <a href="weapons.html">Weapons</a>
+    <a href="characters.html">Characters</a>
+    <a href="bundles.html">Bundles</a>
+    <a href="videos.html">Videos</a>
+    <a href="live.html">Live</a>
+    <a href="tournaments.html">Tournaments</a>
+    <a href="community.html">Community</a>
+    <a href="profile.html">Profile</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" style="border-bottom:1px solid var(--line); padding:0;">
+  <div class="wrap hero-inner">
+    <span class="hero-tag"><span class="dot"></span> NEW EVENT LIVE</span>
+    <h1>Booyah Day <span class="accent">2024</span></h1>
+    <div class="hero-meta">
+      <span><strong>May 25</strong> – Jun 5, 2024</span>
+      <span>Reward tier · <strong>7 stages</strong></span>
+      <span>Ends in <strong id="countdown">—</strong></span>
+    </div>
+    <div class="hero-actions">
+      <a href="events.html" class="btn-primary">View Event</a>
+      <a href="live.html" class="btn-ghost">Watch Live · 12.5K</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BREAKING NEWS ================= -->
+<section id="news">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Breaking</div>
+        <h2 style="margin-top:8px;">Latest News</h2>
+      </div>
+      <a href="news.html" class="view-all">All News →</a>
+    </div>
+    <div class="grid-news" id="newsGrid">
+      <!-- populated by loadNews() ; skeleton fallback below -->
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REDEEM CODES + LIVE ================= -->
+<section id="redeem">
+  <div class="wrap grid-2">
+    <div>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Active Today</div>
+          <h2 style="margin-top:8px;">Redeem Codes</h2>
+        </div>
+        <a href="redeem-codes.html" class="view-all">Claim All →</a>
+      </div>
+      <div class="bracket" id="codeList">
+        <div class="code-row">
+          <div><div class="code-val">FFN3X8Q9Z2</div><div class="code-meta">100% working · expires May 30</div></div>
+          <a href="redeem-codes.html" class="btn-ghost">Claim</a>
+        </div>
+        <div class="code-row">
+          <div><div class="code-val">FFIC-RF85-4MZT</div><div class="code-meta">100% working · expires May 30</div></div>
+          <a href="redeem-codes.html" class="btn-ghost">Claim</a>
+        </div>
+        <div class="code-row">
+          <div><div class="code-val">FFIC-JG4Y-KB76</div><div class="code-meta">100% working · expires May 30</div></div>
+          <a href="redeem-codes.html" class="btn-ghost">Claim</a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">On Air</div>
+          <h2 style="margin-top:8px;">Live Stream</h2>
+        </div>
+      </div>
+      <a href="live.html" class="card live-card bracket" style="display:block;">
+        <div class="thumb skel">
+          <span class="badge live"><span class="dot"></span> LIVE</span>
+          <span class="live-stat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            12.5K watching
+          </span>
+        </div>
+        <div class="body">
+          <h3>Free Fire Live with Giveaway</h3>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRENDING VIDEOS ================= -->
+<section id="videos">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">This Week</div>
+        <h2 style="margin-top:8px;">Trending Videos</h2>
+      </div>
+      <a href="videos.html" class="view-all">All Videos →</a>
+    </div>
+    <div class="grid-3" id="videoGrid">
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><h3>New Evo Gun Gameplay</h3><p>25K views · 2 days ago</p></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><h3>Top 10 Headshot Tips</h3><p>18K views · 2 days ago</p></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><h3>Rank Push Tricks</h3><p>19K views · 3 days ago</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="index.html" class="brand">
+          <svg class="flame" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+          FREE FIRE HUB
+        </a>
+        <p>Fan-made hub for Free Fire news, events, redeem codes and community. Not affiliated with or endorsed by Garena.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul><li><a href="index.html">Home</a></li><li><a href="community.html">Community</a></li><li><a href="contact.html">Contact</a></li></ul>
+      </div>
+      <div>
+        <h4>Categories</h4>
+        <ul><li><a href="news.html">News</a></li><li><a href="events.html">Events</a></li><li><a href="redeem-codes.html">Redeem Codes</a></li></ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <div class="social-row">
+          <a href="#" class="icon-btn" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" class="icon-btn" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l5 3-5 3V9Z" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="icon-btn" aria-label="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="12" rx="4"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2024 Free Fire Fan Hub. Unofficial fan site.</span>
+      <span id="buildTag">v1.0 · Home module</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= FIREBASE ================= -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
+    authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e",
+    storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364",
+    appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  const auth = getAuth(app);
+  try { getAnalytics(app); } catch (e) { /* analytics can fail in some embedded/preview contexts, non-fatal */ }
+
+  // ---- Auth-aware header ----
+  onAuthStateChanged(auth, (user) => {
+    const authBtn = document.getElementById("authBtn");
+    if (user) {
+      authBtn.textContent = user.displayName ? user.displayName.split(" ")[0] : "Profile";
+      authBtn.href = "profile.html";
+    } else {
+      authBtn.textContent = "Login";
+      authBtn.href = "login.html";
+    }
+  });
+
+  // ---- Load latest news from Firestore: collection "news", fields: title, excerpt, imageUrl, publishedAt ----
+  async function loadNews() {
+    const grid = document.getElementById("newsGrid");
+    try {
+      const q = query(collection(db, "news"), orderBy("publishedAt", "desc"), limit(4));
+      const snap = await getDocs(q);
+      if (snap.empty) { renderNewsFallback(grid); return; }
+      grid.innerHTML = "";
+      snap.forEach(doc => {
+        const d = doc.data();
+        const date = d.publishedAt?.toDate ? d.publishedAt.toDate().toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "";
+        grid.insertAdjacentHTML("beforeend", `
+          <a href="news-detail.html?id=${doc.id}" class="card bracket">
+            <div class="thumb">${d.imageUrl ? `<img src="${d.imageUrl}" alt="${escapeHtml(d.title || '')}">` : ""}</div>
+            <div class="body">
+              <div class="date">${date}</div>
+              <h3>${escapeHtml(d.title || "Untitled")}</h3>
+              <p>${escapeHtml(d.excerpt || "")}</p>
+            </div>
+          </a>`);
+      });
+    } catch (err) {
+      console.warn("News load failed, showing fallback:", err.message);
+      renderNewsFallback(grid);
+    }
+  }
+
+  function renderNewsFallback(grid) {
+    const items = [
+      { title: "OB45 Update Full Details", date: "May 21, 2024", excerpt: "Everything new in the OB45 patch." },
+      { title: "New Character Ability Update", date: "May 21, 2024", excerpt: "Balance changes across the roster." },
+      { title: "Rampage Event Confirmed", date: "May 22, 2024", excerpt: "Dates and reward tiers revealed." },
+      { title: "Free Fire India Official News", date: "May 22, 2024", excerpt: "Official statement from the team." },
+    ];
+    grid.innerHTML = items.map(d => `
+      <a href="news.html" class="card bracket">
+        <div class="thumb"></div>
+        <div class="body">
+          <div class="date">${d.date}</div>
+          <h3>${d.title}</h3>
+          <p>${d.excerpt}</p>
+        </div>
+      </a>`).join("");
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  loadNews();
+
+  // ---- Countdown for hero event ----
+  const eventEnd = new Date("2024-06-05T23:59:59");
+  function tickCountdown() {
+    const el = document.getElementById("countdown");
+    const diff = eventEnd - new Date();
+    if (diff <= 0) { el.textContent = "Ended"; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    el.textContent = `${d}d ${h}h`;
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 60000);
+</script>
+
+<!-- ================= UI behaviour (no Firebase dependency) ================= -->
+<script>
+  const menuToggle = document.getElementById("menuToggle");
+  const mobileMenu = document.getElementById("mobileMenu");
+  menuToggle.addEventListener("click", () => {
+    const isOpen = mobileMenu.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+</script>
+
+</body>
+</html>
