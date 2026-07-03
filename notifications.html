@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — Free Fire Fan Hub</title>
+<style>
+  :root{
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --red-alert:#ff4b3e; --blue:#4a9eff; --green-ok:#34c77b;
+    --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif; --font-body:'Inter','Segoe UI',sans-serif; --font-mono:'JetBrains Mono','Consolas',monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
+  a{ color:inherit; text-decoration:none; } button{ font-family:inherit; cursor:pointer; }
+  .wrap{ max-width:720px; margin:0 auto; padding:0 20px; }
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ max-width:1100px; margin:0 auto; padding:0 20px; display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
+  .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
+  .page-head{ padding:40px 0 20px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px; }
+  .page-head h1{ font-family:var(--font-display); font-weight:700; font-size:32px; text-transform:uppercase; margin-top:8px; }
+  .mark-all{ font-family:var(--font-mono); font-size:12px; color:var(--amber); background:none; border:none; letter-spacing:.04em; text-transform:uppercase; }
+
+  .tabs{ display:flex; gap:2px; margin-bottom:20px; }
+  .tabs button{ background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:10px 16px; font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; }
+  .tabs button.active{ color:var(--amber); background:var(--bg-card); border-color:var(--amber); }
+
+  section{ padding-bottom:60px; }
+  .notif{ display:flex; gap:14px; padding:16px; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .notif:last-child{ border-bottom:none; }
+  .notif.unread{ background:rgba(255,176,32,.04); }
+  .notif-icon{ width:38px; height:38px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .notif-icon svg{ width:19px; height:19px; }
+  .notif-icon.news{ background:rgba(255,176,32,.12); color:var(--amber); }
+  .notif-icon.event{ background:rgba(255,75,62,.12); color:var(--red-alert); }
+  .notif-icon.system{ background:rgba(74,158,255,.12); color:var(--blue); }
+  .notif-icon.community{ background:rgba(52,199,123,.12); color:var(--green-ok); }
+  .notif-title{ font-size:14px; font-weight:500; }
+  .notif-desc{ font-size:12.5px; color:var(--text-dim); margin-top:3px; }
+  .notif-time{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:5px; }
+  .unread-dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); flex-shrink:0; margin-top:6px; }
+
+  .empty-state{ padding:60px 20px; text-align:center; color:var(--text-dim); font-size:13.5px; }
+  .empty-state svg{ width:36px; height:36px; color:var(--text-faint); margin-bottom:12px; }
+  .login-cta{ padding:40px 20px; text-align:center; font-size:13.5px; color:var(--text-dim); }
+  .login-cta a{ color:var(--amber); }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="navbar">
+    <a href="index.html" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+      FREE FIRE HUB
+    </a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <div><div class="eyebrow">Stay Updated</div><h1>Notifications</h1></div>
+    <button class="mark-all" id="markAllBtn" style="display:none;">Mark all as read</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button data-tab="all" class="active">All</button>
+    <button data-tab="news">News</button>
+    <button data-tab="event">Events</button>
+    <button data-tab="redeem">Redeem</button>
+    <button data-tab="system">System</button>
+  </div>
+</div>
+
+<section class="wrap">
+  <div class="bracket" id="notifList">
+    <div class="empty-state">Loading…</div>
+  </div>
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, query, where, orderBy, getDocs, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278", authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e", storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364", appId: "1:249508261364:web:b846118ee5952e3b099da1", measurementId: "G-W85RYGBJE0"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null, items = [], activeTab = "all";
+
+  const ICONS = {
+    news: `<path d="M4 22h14a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v3"/><path d="M14 2v5h5"/>`,
+    event: `<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>`,
+    redeem: `<rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v10M18 7v10"/>`,
+    system: `<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>`,
+  };
+
+  const FALLBACK = [
+    { id:"fb1", type:"redeem", title:"New redeem code is live!", desc:"Claim FFN3X8Q9Z2 before it expires.", time:"10 minutes ago", read:false },
+    { id:"fb2", type:"event", title:"Booyah Day event is coming!", desc:"Get ready for a 7-stage reward event.", time:"1 hour ago", read:false },
+    { id:"fb3", type:"system", title:"Server maintenance on May 25", desc:"Expect brief downtime during the update.", time:"3 hours ago", read:true },
+    { id:"fb4", type:"news", title:"New video uploaded", desc:"Check out the latest gameplay highlight.", time:"5 hours ago", read:true },
+    { id:"fb5", type:"event", title:"Tournament registration open", desc:"FF Champions Cup registration is now open.", time:"1 day ago", read:true },
+  ];
+
+  function escapeHtml(str){ return String(str??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  async function load(user){
+    const list = document.getElementById("notifList");
+    if (!user) {
+      list.innerHTML = `<div class="login-cta">Notifications பார்க்க <a href="login.html?redirect=notifications.html">Login</a> பண்ணுங்க.</div>`;
+      return;
+    }
+    try {
+      const q = query(collection(db, "notifications"), where("uid", "==", user.uid), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      items = snap.empty ? FALLBACK : snap.docs.map(d => {
+        const v = d.data();
+        return { id:d.id, type:v.type||"system", title:v.title, desc:v.desc||"", read:!!v.read,
+          time: v.createdAt?.toDate ? timeAgo(v.createdAt.toDate()) : "" };
+      });
+    } catch (e) { console.warn("notifications load failed:", e.message); items = FALLBACK; }
+    render();
+  }
+
+  function timeAgo(date){
+    const s = Math.floor((Date.now() - date.getTime())/1000);
+    if (s < 3600) return Math.floor(s/60) + "m ago";
+    if (s < 86400) return Math.floor(s/3600) + "h ago";
+    return Math.floor(s/86400) + "d ago";
+  }
+
+  function render(){
+    const filtered = activeTab === "all" ? items : items.filter(i => i.type === activeTab);
+    const list = document.getElementById("notifList");
+    const hasUnread = items.some(i => !i.read);
+    document.getElementById("markAllBtn").style.display = hasUnread ? "block" : "none";
+
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <div>Notifications இல்ல.</div>
+      </div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(n => `
+      <div class="notif ${n.read ? '' : 'unread'}" data-id="${n.id}">
+        <div class="notif-icon ${n.type}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICONS[n.type]||ICONS.system}</svg></div>
+        <div style="flex:1;">
+          <div class="notif-title">${escapeHtml(n.title)}</div>
+          <div class="notif-desc">${escapeHtml(n.desc)}</div>
+          <div class="notif-time">${escapeHtml(n.time)}</div>
+        </div>
+        ${n.read ? '' : '<div class="unread-dot"></div>'}
+      </div>`).join("");
+
+    list.querySelectorAll(".notif.unread").forEach(el => {
+      el.addEventListener("click", () => markRead(el.dataset.id, el));
+    });
+  }
+
+  async function markRead(id, el){
+    el.classList.remove("unread");
+    el.querySelector(".unread-dot")?.remove();
+    const item = items.find(i => i.id === id);
+    if (item) item.read = true;
+    if (currentUser && !id.startsWith("fb")) {
+      try { await updateDoc(doc(db, "notifications", id), { read: true }); } catch (e) { console.warn(e.message); }
+    }
+    document.getElementById("markAllBtn").style.display = items.some(i => !i.read) ? "block" : "none";
+  }
+
+  document.getElementById("markAllBtn").addEventListener("click", async () => {
+    items.forEach(i => i.read = true);
+    render();
+    if (currentUser) {
+      try {
+        const batch = writeBatch(db);
+        const q = query(collection(db, "notifications"), where("uid", "==", currentUser.uid), where("read", "==", false));
+        const snap = await getDocs(q);
+        snap.forEach(d => batch.update(d.ref, { read: true }));
+        await batch.commit();
+      } catch (e) { console.warn("mark all failed:", e.message); }
+    }
+  });
+
+  document.querySelectorAll("#tabs button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#tabs button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      render();
+    });
+  });
+
+  onAuthStateChanged(auth, (user) => { currentUser = user; load(user); });
+</script>
+</body>
+</html>
