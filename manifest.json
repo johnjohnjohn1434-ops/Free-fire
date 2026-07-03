@@ -1,0 +1,23 @@
+{
+  "name": "Free Fire Fan Hub",
+  "short_name": "FF Hub",
+  "description": "Free Fire India — News, Events, Redeem Codes, Weapons, Characters, Live Stream & Community.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0f11",
+  "theme_color": "#0d0f11",
+  "lang": "ta-IN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Redeem Codes", "url": "/redeem-codes.html", "description": "Claim today's redeem codes" },
+    { "name": "Live Stream", "url": "/live.html", "description": "Watch the live stream" },
+    { "name": "News", "url": "/news.html", "description": "Latest Free Fire news" }
+  ]
+}
+
