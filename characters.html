@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Characters — Free Fire Fan Hub</title>
+<meta name="description" content="Free Fire character abilities and roster.">
+<style>
+  :root{
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --green-ok:#34c77b; --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif; --font-body:'Inter','Segoe UI',sans-serif; --font-mono:'JetBrains Mono','Consolas',monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
+  a{ color:inherit; text-decoration:none; } button{ font-family:inherit; cursor:pointer; } img{ max-width:100%; display:block; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 20px; }
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
+  .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
+  .page-head{ padding:44px 0 24px; border-bottom:1px solid var(--line); }
+  .page-head h1{ font-family:var(--font-display); font-weight:700; font-size:38px; text-transform:uppercase; margin-top:8px; }
+  .chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:22px; }
+  .chip{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:9px 14px; }
+  .chip.active{ border-color:var(--amber); color:var(--amber); background:rgba(255,176,32,.06); }
+  section{ padding:32px 0 60px; }
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .char-card{ padding:16px; text-align:center; cursor:pointer; }
+  .char-card .portrait{ width:100%; aspect-ratio:1; background:var(--bg-raised); margin-bottom:12px; overflow:hidden; }
+  .char-card .portrait img{ width:100%; height:100%; object-fit:cover; }
+  .char-card h3{ font-family:var(--font-display); font-weight:600; font-size:16px; }
+  .char-card .role{ font-family:var(--font-mono); font-size:10.5px; color:var(--amber); text-transform:uppercase; letter-spacing:.05em; margin-top:3px; }
+  .status-dot{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px; color:var(--green-ok); text-transform:uppercase; margin-top:8px; }
+  .status-dot span{ width:6px; height:6px; border-radius:50%; background:var(--green-ok); }
+
+  /* modal */
+  .overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; align-items:center; justify-content:center; padding:20px; }
+  .overlay.show{ display:flex; }
+  .modal{ background:var(--bg-card); border:1px solid var(--line); max-width:460px; width:100%; padding:28px; position:relative; }
+  .modal::before{ content:""; position:absolute; top:-1px; left:-1px; width:16px; height:16px; border:2px solid var(--amber); border-right:none; border-bottom:none; }
+  .modal .portrait{ width:100px; height:100px; background:var(--bg-raised); margin-bottom:16px; }
+  .modal .portrait img{ width:100%; height:100%; object-fit:cover; }
+  .modal h2{ font-family:var(--font-display); font-weight:700; font-size:24px; text-transform:uppercase; }
+  .modal .role{ font-family:var(--font-mono); font-size:11.5px; color:var(--amber); text-transform:uppercase; margin-top:4px; }
+  .modal .ability-name{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); margin-top:18px; }
+  .modal .ability-desc{ font-size:14px; color:var(--text-dim); margin-top:6px; line-height:1.6; }
+  .close-btn{ position:absolute; top:14px; right:14px; width:30px; height:30px; background:transparent; border:1px solid var(--line); color:var(--text-dim); }
+
+  @media(max-width:900px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:600px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap navbar">
+    <a href="index.html" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+      FREE FIRE HUB
+    </a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</header>
+
+<div class="page-head wrap">
+  <div class="eyebrow">Character Roster</div>
+  <h1>Characters</h1>
+  <div class="chip-row" id="roleChips">
+    <button class="chip active" data-role="all">All</button>
+    <button class="chip" data-role="Assault">Assault</button>
+    <button class="chip" data-role="Support">Support</button>
+    <button class="chip" data-role="Survival">Survival</button>
+  </div>
+</div>
+
+<section class="wrap">
+  <div class="grid" id="charGrid"></div>
+</section>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close-btn" id="closeBtn">✕</button>
+    <div class="portrait" id="mPortrait"></div>
+    <h2 id="mName">—</h2>
+    <div class="role" id="mRole">—</div>
+    <div class="ability-name" id="mAbilityName">Ability</div>
+    <div class="ability-desc" id="mAbilityDesc">—</div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278", authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e", storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364", appId: "1:249508261364:web:b846118ee5952e3b099da1", measurementId: "G-W85RYGBJE0"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const FALLBACK = [
+    { id:"alok", name:"Alok", role:"Support", abilityName:"Drop the Beat", abilityDesc:"Creates a 5m aura that heals 5 HP/s and boosts movement speed by 15% for 5 seconds." },
+    { id:"chrono", name:"Chrono", role:"Support", abilityName:"Time Turner", abilityDesc:"Creates a force field that blocks damage from enemies while allowing you to shoot out." },
+    { id:"k", name:"K", role:"Assault", abilityName:"Master of All", abilityDesc:"Switches between Jiu-Jitsu mode (max HP boost) and Psychology mode (fast EP conversion)." },
+    { id:"kelly", name:"Kelly", role:"Survival", abilityName:"Dash", abilityDesc:"Passively increases sprinting speed, letting you outrun enemies and rotate faster." },
+  ];
+
+  let items = [], activeRole = "all";
+
+  async function load(){
+    try {
+      const snap = await getDocs(collection(db, "characters"));
+      items = snap.empty ? FALLBACK : snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    } catch (e) { console.warn("characters load failed:", e.message); items = FALLBACK; }
+    render();
+  }
+
+  function escapeHtml(str){ return String(str??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function render(){
+    const filtered = activeRole === "all" ? items : items.filter(i => i.role === activeRole);
+    const grid = document.getElementById("charGrid");
+    if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1;color:var(--text-dim);padding:40px;text-align:center;">எதுவும் இல்ல.</div>`; return; }
+    grid.innerHTML = filtered.map(c => `
+      <div class="char-card bracket" data-id="${c.id}">
+        <div class="portrait">${c.imageUrl ? `<img src="${c.imageUrl}" alt="${escapeHtml(c.name)}">`:''}</div>
+        <h3>${escapeHtml(c.name)}</h3>
+        <div class="role">${escapeHtml(c.role)}</div>
+        <div class="status-dot"><span></span>Active</div>
+      </div>`).join("");
+    grid.querySelectorAll(".char-card").forEach(card => card.addEventListener("click", () => openModal(card.dataset.id)));
+  }
+
+  function openModal(id){
+    const c = items.find(i => i.id === id);
+    if (!c) return;
+    document.getElementById("mPortrait").innerHTML = c.imageUrl ? `<img src="${c.imageUrl}" alt="">` : "";
+    document.getElementById("mName").textContent = c.name;
+    document.getElementById("mRole").textContent = c.role;
+    document.getElementById("mAbilityName").textContent = c.abilityName || "Ability";
+    document.getElementById("mAbilityDesc").textContent = c.abilityDesc || "";
+    document.getElementById("overlay").classList.add("show");
+  }
+  document.getElementById("closeBtn").addEventListener("click", () => document.getElementById("overlay").classList.remove("show"));
+  document.getElementById("overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") e.currentTarget.classList.remove("show"); });
+
+  document.querySelectorAll("#roleChips .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#roleChips .chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeRole = chip.dataset.role;
+      render();
+    });
+  });
+
+  load();
+</script>
+</body>
+</html>
