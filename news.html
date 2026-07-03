@@ -3,155 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Fire Fan Hub — News</title>
-<meta name="description" content="Latest Free Fire news, updates, and patch notes.">
+<title>News — Free Fire Fan Hub</title>
+<meta name="description" content="Latest Free Fire news, updates and announcements.">
 
 <style>
   :root{
-    --bg:            #0d0f11;
-    --bg-raised:     #15181b;
-    --bg-card:       #1a1e22;
-    --line:          #2a2f34;
-    --amber:         #ffb020;
-    --amber-dim:     #7a5615;
-    --red-alert:     #ff4b3e;
-    --text:          #eef1f3;
-    --text-dim:      #8b939a;
-    --text-faint:    #565d63;
-    --font-display:  'Rajdhani', 'Oswald', 'Arial Narrow', sans-serif;
-    --font-body:     'Inter', 'Segoe UI', sans-serif;
-    --font-mono:     'JetBrains Mono', 'Consolas', monospace;
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b;
+    --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif;
+    --font-body:'Inter','Segoe UI',sans-serif;
+    --font-mono:'JetBrains Mono','Consolas',monospace;
   }
-
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:var(--font-body);
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
   a{ color:inherit; text-decoration:none; }
-  img{ max-width:100%; display:block; }
-  ul{ list-style:none; }
   button{ font-family:inherit; cursor:pointer; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 20px; }
 
-  .wrap{ max-width:1240px; margin:0 auto; padding:0 20px; }
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
 
-  /* ---------- corner-bracket signature element ---------- */
-  .bracket{
-    position:relative;
-    border:1px solid var(--line);
-    background:var(--bg-card);
-  }
-  .bracket::before, .bracket::after{
-    content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85;
-  }
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
   .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
   .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
 
-  /* ---------- header / nav ---------- */
-  header{
-    position:sticky; top:0; z-index:100;
-    background:rgba(13,15,17,.92);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
-  .brand{
-    font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:.03em;
-    display:flex; align-items:center; gap:8px;
-  }
-  .brand .flame{ color:var(--amber); }
-  .nav-links{ display:flex; align-items:center; gap:2px; }
-  .nav-links a{
-    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.03em; text-transform:uppercase;
-    color:var(--text-dim); padding:10px 12px; border-bottom:2px solid transparent;
-    transition:color .15s ease, border-color .15s ease;
-  }
-  .nav-links a:hover, .nav-links a:focus-visible{ color:var(--text); }
-  .nav-links a.active{ color:var(--amber); border-color:var(--amber); }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
 
-  .nav-right{ display:flex; align-items:center; gap:10px; }
-  .icon-btn{
-    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
-    background:transparent; border:1px solid var(--line); color:var(--text-dim);
-  }
-  .icon-btn:hover{ border-color:var(--amber); color:var(--amber); }
-  .icon-btn svg{ width:18px; height:18px; }
+  .page-head{ padding:44px 0 24px; border-bottom:1px solid var(--line); }
+  .page-head h1{ font-family:var(--font-display); font-weight:700; font-size:38px; text-transform:uppercase; margin-top:8px; }
 
-  .btn-ghost{
-    font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
-    background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line);
-  }
-  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
-  .menu-toggle{ display:none; }
+  .search-row{ display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+  .search-box{ position:relative; flex:1; min-width:220px; }
+  .search-box svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-faint); }
+  .search-box input{ width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text); padding:11px 12px 11px 38px; font-size:13.5px; }
+  .search-box input:focus{ outline:none; border-color:var(--amber); }
+  .chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:9px 14px; }
+  .chip.active{ border-color:var(--amber); color:var(--amber); background:rgba(255,176,32,.06); }
 
-  /* ---------- page header ---------- */
-  .page-header {
-    padding: 60px 0 40px;
-    border-bottom: 1px solid var(--line);
-    background: radial-gradient(ellipse at 50% 0%, rgba(255,176,32,.08), transparent 70%);
-    text-align: center;
-  }
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: 48px;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-    margin-bottom: 10px;
-  }
-  .page-header p {
-    color: var(--text-dim);
-    font-size: 16px;
-  }
-
-  /* ---------- grids ---------- */
-  section{ padding:60px 0; border-bottom:1px solid var(--line); }
-  .grid-news{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  
-  .card{ overflow:hidden; display: flex; flex-direction: column; }
+  section{ padding:32px 0 60px; }
+  .grid-news{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .card{ overflow:hidden; }
   .card .thumb{ aspect-ratio:16/10; background:linear-gradient(135deg,#22262a,#141618); position:relative; overflow:hidden; }
-  .card .thumb img{ width:100%; height:100%; object-fit:cover; transition: transform 0.3s ease; }
-  .card:hover .thumb img { transform: scale(1.05); }
-  .card .body{ padding:14px 16px 16px; flex-grow: 1; display: flex; flex-direction: column; }
+  .card .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .card .body{ padding:14px 16px 16px; }
   .card .date{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; }
   .card h3{ font-family:var(--font-display); font-weight:600; font-size:17px; margin-top:6px; line-height:1.25; }
-  .card p{ font-size:13px; color:var(--text-dim); margin-top:8px; flex-grow: 1; }
+  .card p{ font-size:13px; color:var(--text-dim); margin-top:8px; }
+  .badge{ position:absolute; top:10px; left:10px; font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; background:var(--amber); color:#151505; padding:4px 8px; }
 
-  /* footer */
-  footer{ padding:48px 0 28px; }
-  .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:32px; margin-bottom:36px; }
-  footer h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
-  footer li{ margin-bottom:9px; font-size:13.5px; color:var(--text-dim); }
-  footer li a:hover{ color:var(--amber); }
-  .foot-brand p{ color:var(--text-dim); font-size:13.5px; margin-top:10px; max-width:340px; }
-  .foot-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:24px; border-top:1px solid var(--line); font-family:var(--font-mono); font-size:11px; color:var(--text-faint); flex-wrap:wrap; gap:10px; }
-  .social-row{ display:flex; gap:10px; }
-
-  /* skeleton loading */
   .skel{ background:linear-gradient(90deg,var(--bg-card) 0%,#23282d 50%,var(--bg-card) 100%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
   @keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
-  /* ---------- responsive ---------- */
-  @media(max-width:1080px){
-    .nav-links{ display:none; }
-    .menu-toggle{ display:flex; }
-    .grid-news{ grid-template-columns:repeat(2,1fr); }
-    .foot-grid{ grid-template-columns:1fr 1fr; }
-  }
-  @media(max-width:560px){
-    .grid-news{ grid-template-columns:1fr; }
-    .foot-grid{ grid-template-columns:1fr; }
-  }
+  .empty-state{ padding:60px 20px; text-align:center; color:var(--text-dim); font-size:13.5px; grid-column:1/-1; }
+  .empty-state svg{ width:36px; height:36px; color:var(--text-faint); margin-bottom:12px; }
 
-  .mobile-menu{ display:none; flex-direction:column; background:var(--bg-raised); border-bottom:1px solid var(--line); }
-  .mobile-menu.open{ display:flex; }
-  .mobile-menu a{ padding:14px 20px; border-bottom:1px solid var(--line); font-family:var(--font-mono); font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); }
-  .mobile-menu a.active{ color:var(--amber); }
+  .load-more{ display:flex; justify-content:center; margin-top:32px; }
+  .btn-primary{
+    font-family:var(--font-mono); font-size:12.5px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--amber); color:#151505; padding:12px 22px; border:none;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .btn-primary:disabled{ opacity:.5; }
+
+  /* ---- article detail view ---- */
+  #articleView{ display:none; padding:36px 0 70px; }
+  .article-tag{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--amber); }
+  #articleView h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(28px,4vw,44px); text-transform:uppercase; margin:12px 0; line-height:1.05; }
+  .article-meta{ font-family:var(--font-mono); font-size:12px; color:var(--text-faint); margin-bottom:24px; }
+  .article-hero{ aspect-ratio:16/8; background:linear-gradient(135deg,#22262a,#141618); margin-bottom:28px; overflow:hidden; }
+  .article-hero img{ width:100%; height:100%; object-fit:cover; }
+  .article-body{ max-width:760px; font-size:15.5px; line-height:1.8; color:#d6dade; white-space:pre-line; }
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-bottom:20px; }
+  .back-link:hover{ color:var(--amber); }
+  .back-link svg{ width:14px; height:14px; }
+
+  @media(max-width:900px){ .grid-news{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:560px){ .grid-news{ grid-template-columns:1fr; } }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
 </style>
 </head>
 <body>
@@ -159,94 +97,63 @@
 <header>
   <div class="wrap navbar">
     <a href="index.html" class="brand">
-      <svg class="flame" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/>
-      </svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
       FREE FIRE HUB
     </a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</header>
 
-    <nav class="nav-links" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="news.html" class="active">News</a> 
-      <a href="events.html">Events</a>
-      <a href="redeem-codes.html">Redeem</a>
-      <a href="sensitivity.html">Sensitivity</a>
-      <a href="weapons.html">Weapons</a>
-      <a href="characters.html">Characters</a>
-      <a href="bundles.html">Bundles</a>
-      <a href="videos.html">Videos</a>
-      <a href="live.html">Live</a>
-      <a href="tournaments.html">Tournaments</a>
-      <a href="community.html">Community</a>
-    </nav>
+<!-- LIST VIEW -->
+<div id="listView">
+  <div class="page-head wrap">
+    <div class="eyebrow">Updated Daily</div>
+    <h1>News</h1>
 
-    <div class="nav-right">
-      <button class="icon-btn" id="searchBtn" aria-label="Search">
+    <div class="search-row">
+      <div class="search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
-      <a href="login.html" class="btn-ghost" id="authBtn">Login</a>
-      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
+        <input type="text" id="searchInput" placeholder="Search news…">
+      </div>
+      <div class="chip-row" id="categoryChips">
+        <button class="chip active" data-cat="all">All</button>
+        <button class="chip" data-cat="update">Updates</button>
+        <button class="chip" data-cat="event">Events</button>
+        <button class="chip" data-cat="esports">Esports</button>
+      </div>
     </div>
   </div>
 
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="news.html" class="active">News</a>
-    <a href="events.html">Events</a>
-    <a href="redeem-codes.html">Redeem Codes</a>
+  <section class="wrap">
+    <div class="grid-news" id="newsGrid">
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
+      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
     </div>
-</header>
+    <div class="load-more" id="loadMoreWrap" style="display:none;">
+      <button class="btn-primary" id="loadMoreBtn">Load More</button>
+    </div>
+  </section>
+</div>
 
-<div class="page-header">
+<!-- DETAIL VIEW -->
+<div id="articleView">
   <div class="wrap">
-    <h1>All News & Updates</h1>
-    <p>Get the latest patch notes, character updates, and Free Fire leaks.</p>
+    <a href="#" id="backLink" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to News
+    </a>
+    <div class="article-tag" id="articleTag">News</div>
+    <h1 id="articleTitle">—</h1>
+    <div class="article-meta" id="articleMeta"></div>
+    <div class="article-hero" id="articleHero"></div>
+    <div class="article-body" id="articleBody"></div>
   </div>
 </div>
 
-<section id="all-news">
-  <div class="wrap">
-    <div class="grid-news" id="newsGridPage">
-      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
-      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
-      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
-      <div class="card bracket"><div class="thumb skel"></div><div class="body"><div class="date">Loading…</div></div></div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a href="index.html" class="brand">
-          <svg class="flame" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
-          FREE FIRE HUB
-        </a>
-        <p>Fan-made hub for Free Fire news, events, redeem codes and community.</p>
-      </div>
-      <div>
-        <h4>Quick Links</h4>
-        <ul><li><a href="index.html">Home</a></li><li><a href="community.html">Community</a></li><li><a href="contact.html">Contact</a></li></ul>
-      </div>
-      <div>
-        <h4>Categories</h4>
-        <ul><li><a href="news.html">News</a></li><li><a href="events.html">Events</a></li><li><a href="redeem-codes.html">Redeem Codes</a></li></ul>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span>© 2024 Free Fire Fan Hub. Unofficial fan site.</span>
-      <span id="buildTag">v1.0 · News module</span>
-    </div>
-  </div>
-</footer>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
@@ -254,85 +161,162 @@
     projectId: "freefire-6e80e",
     storageBucket: "freefire-6e80e.firebasestorage.app",
     messagingSenderId: "249508261364",
-    appId: "1:249508261364:web:b846118ee5952e3b099da1"
+    appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
   };
 
   const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  onAuthStateChanged(auth, (user) => {
-    const authBtn = document.getElementById("authBtn");
-    if (user) {
-      authBtn.textContent = user.displayName ? user.displayName.split(" ")[0] : "Profile";
-      authBtn.href = "profile.html";
-    } else {
-      authBtn.textContent = "Login";
-      authBtn.href = "login.html";
-    }
-  });
+  const PAGE_SIZE = 9;
+  let lastDoc = null;
+  let allLoaded = [];
+  let activeCat = "all";
 
-  async function loadAllNews() {
-    const grid = document.getElementById("newsGridPage");
-    try {
-      // Fetching up to 12 news items for the main news page
-      const q = query(collection(db, "news"), orderBy("publishedAt", "desc"), limit(12));
-      const snap = await getDocs(q);
-      if (snap.empty) { renderNewsFallback(grid); return; }
-      grid.innerHTML = "";
-      snap.forEach(doc => {
-        const d = doc.data();
-        const date = d.publishedAt?.toDate ? d.publishedAt.toDate().toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "";
-        grid.insertAdjacentHTML("beforeend", `
-          <a href="news-detail.html?id=${doc.id}" class="card bracket">
-            <div class="thumb">${d.imageUrl ? `<img src="${d.imageUrl}" alt="${escapeHtml(d.title || '')}">` : ""}</div>
-            <div class="body">
-              <div class="date">${date}</div>
-              <h3>${escapeHtml(d.title || "Untitled")}</h3>
-              <p>${escapeHtml(d.excerpt || "")}</p>
-            </div>
-          </a>`);
-      });
-    } catch (err) {
-      console.warn("News load failed, showing fallback:", err.message);
-      renderNewsFallback(grid);
-    }
-  }
-
-  function renderNewsFallback(grid) {
-    const items = [
-      { title: "OB45 Update Full Details", date: "May 21, 2024", excerpt: "Everything new in the OB45 patch." },
-      { title: "New Character Ability Update", date: "May 21, 2024", excerpt: "Balance changes across the roster." },
-      { title: "Rampage Event Confirmed", date: "May 22, 2024", excerpt: "Dates and reward tiers revealed." },
-      { title: "Free Fire India Official News", date: "May 22, 2024", excerpt: "Official statement from the team." },
-      { title: "Upcoming Evo Gun Leaks", date: "May 23, 2024", excerpt: "Check out the next evolution weapon coming to the game." },
-      { title: "Esports Tournament 2024", date: "May 24, 2024", excerpt: "Registrations are now open for the grand tournament." }
-    ];
-    grid.innerHTML = items.map(d => `
-      <a href="news.html" class="card bracket">
-        <div class="thumb"></div>
-        <div class="body">
-          <div class="date">${d.date}</div>
-          <h3>${d.title}</h3>
-          <p>${d.excerpt}</p>
-        </div>
-      </a>`).join("");
-  }
+  const FALLBACK = [
+    { id:"fb1", title:"OB45 Update Full Details", excerpt:"Everything new in the OB45 patch — weapons, maps and balance changes.", category:"update", date:"May 21, 2024", content:"OB45 brings a full weapon balance pass, a new limited-time mode and performance improvements for low-end devices.\n\nKey highlights:\n- New weapon: Evo Gun\n- Character ability rework for 3 heroes\n- Reduced loading times on 2GB RAM devices" },
+    { id:"fb2", title:"New Character Ability Update", excerpt:"Balance changes across the roster this season.", category:"update", date:"May 21, 2024", content:"Several character abilities have been rebalanced to improve competitive fairness this ranked season." },
+    { id:"fb3", title:"Rampage Event Confirmed", excerpt:"Dates and reward tiers revealed for the Rampage event.", category:"event", date:"May 22, 2024", content:"The Rampage event returns with a 7-stage reward track and exclusive bundle rewards." },
+    { id:"fb4", title:"Free Fire India Official News", excerpt:"Official statement from the Free Fire India team.", category:"esports", date:"May 22, 2024", content:"The Free Fire India team shared updates on the upcoming regional tournament schedule." },
+    { id:"fb5", title:"Booyah Pass Season 15 Leaks", excerpt:"Early leaks on Booyah Pass rewards for the next season.", category:"update", date:"May 21, 2024", content:"Leaked assets suggest a mecha-themed Booyah Pass for Season 15, with new emotes and a legendary bundle." },
+  ];
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
 
-  loadAllNews();
-</script>
+  async function fetchPage(){
+    try {
+      let q = query(collection(db, "news"), orderBy("publishedAt", "desc"), limit(PAGE_SIZE));
+      if (lastDoc) q = query(collection(db, "news"), orderBy("publishedAt", "desc"), startAfter(lastDoc), limit(PAGE_SIZE));
+      const snap = await getDocs(q);
+      if (snap.empty && allLoaded.length === 0) {
+        allLoaded = FALLBACK;
+        return { items: FALLBACK, hasMore: false };
+      }
+      lastDoc = snap.docs[snap.docs.length - 1] || lastDoc;
+      const items = snap.docs.map(d => {
+        const v = d.data();
+        return {
+          id: d.id,
+          title: v.title || "Untitled",
+          excerpt: v.excerpt || "",
+          category: v.category || "update",
+          date: v.publishedAt?.toDate ? v.publishedAt.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : "",
+          content: v.content || v.excerpt || "",
+          imageUrl: v.imageUrl || ""
+        };
+      });
+      allLoaded = allLoaded.concat(items);
+      return { items, hasMore: snap.docs.length === PAGE_SIZE };
+    } catch (e) {
+      console.warn("news fetch failed, using fallback:", e.message);
+      allLoaded = FALLBACK;
+      return { items: FALLBACK, hasMore: false };
+    }
+  }
 
-<script>
-  const menuToggle = document.getElementById("menuToggle");
-  const mobileMenu = document.getElementById("mobileMenu");
-  menuToggle.addEventListener("click", () => {
-    mobileMenu.classList.toggle("open");
+  function cardHtml(item){
+    return `
+    <a href="#" class="card bracket" data-id="${item.id}">
+      <div class="thumb">
+        ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${escapeHtml(item.title)}">` : ""}
+        <span class="badge">${escapeHtml(item.category || 'news')}</span>
+      </div>
+      <div class="body">
+        <div class="date">${item.date}</div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.excerpt)}</p>
+      </div>
+    </a>`;
+  }
+
+  function renderGrid(items){
+    const grid = document.getElementById("newsGrid");
+    const filtered = activeCat === "all" ? items : items.filter(i => i.category === activeCat);
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <div>எந்த news-மும் கிடைக்கல.</div>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = filtered.map(cardHtml).join("");
+    attachCardHandlers();
+  }
+
+  function attachCardHandlers(){
+    document.querySelectorAll("#newsGrid .card").forEach(card => {
+      card.addEventListener("click", (e) => {
+        e.preventDefault();
+        openArticle(card.dataset.id);
+      });
+    });
+  }
+
+  function openArticle(id){
+    const item = allLoaded.find(i => i.id === id);
+    if (!item) return;
+    document.getElementById("listView").style.display = "none";
+    document.getElementById("articleView").style.display = "block";
+    document.getElementById("articleTag").textContent = item.category || "News";
+    document.getElementById("articleTitle").textContent = item.title;
+    document.getElementById("articleMeta").textContent = item.date;
+    document.getElementById("articleHero").innerHTML = item.imageUrl ? `<img src="${item.imageUrl}" alt="">` : "";
+    document.getElementById("articleBody").textContent = item.content;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    history.pushState({ id }, "", `?id=${id}`);
+  }
+
+  function closeArticle(){
+    document.getElementById("articleView").style.display = "none";
+    document.getElementById("listView").style.display = "block";
+    history.pushState({}, "", window.location.pathname);
+  }
+  document.getElementById("backLink").addEventListener("click", (e) => { e.preventDefault(); closeArticle(); });
+
+  // ---- search (client-side over loaded items) ----
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    const term = e.target.value.trim().toLowerCase();
+    const matched = term ? allLoaded.filter(i => i.title.toLowerCase().includes(term) || i.excerpt.toLowerCase().includes(term)) : allLoaded;
+    renderGrid(matched);
+  });
+
+  // ---- category chips ----
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeCat = chip.dataset.cat;
+      renderGrid(allLoaded);
+    });
+  });
+
+  // ---- load more ----
+  document.getElementById("loadMoreBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("loadMoreBtn");
+    btn.disabled = true; btn.textContent = "Loading…";
+    const { hasMore } = await fetchPage();
+    renderGrid(allLoaded);
+    document.getElementById("loadMoreWrap").style.display = hasMore ? "flex" : "none";
+    btn.disabled = false; btn.textContent = "Load More";
+  });
+
+  // ---- initial load ----
+  (async () => {
+    const { items, hasMore } = await fetchPage();
+    renderGrid(items);
+    document.getElementById("loadMoreWrap").style.display = hasMore ? "flex" : "none";
+
+    // open directly if ?id= present in URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("id")) openArticle(params.get("id"));
+  })();
+
+  window.addEventListener("popstate", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("id")) openArticle(params.get("id")); else closeArticle();
   });
 </script>
-
 </body>
 </html>
