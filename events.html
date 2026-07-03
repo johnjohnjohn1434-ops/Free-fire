@@ -3,163 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Fire Fan Hub — Events</title>
-<meta name="description" content="Track active Free Fire events, rewards, and upcoming schedules.">
+<title>Events — Free Fire Fan Hub</title>
+<meta name="description" content="Current, upcoming and completed Free Fire in-game events.">
 
 <style>
   :root{
-    --bg:            #0d0f11;
-    --bg-raised:     #15181b;
-    --bg-card:       #1a1e22;
-    --line:          #2a2f34;
-    --amber:         #ffb020;
-    --amber-dim:     #7a5615;
-    --red-alert:     #ff4b3e;
-    --green-alert:   #00e676;
-    --text:          #eef1f3;
-    --text-dim:      #8b939a;
-    --text-faint:    #565d63;
-    --font-display:  'Rajdhani', 'Oswald', 'Arial Narrow', sans-serif;
-    --font-body:     'Inter', 'Segoe UI', sans-serif;
-    --font-mono:     'JetBrains Mono', 'Consolas', monospace;
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b;
+    --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif;
+    --font-body:'Inter','Segoe UI',sans-serif;
+    --font-mono:'JetBrains Mono','Consolas',monospace;
   }
-
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{
-    background:var(--bg); color:var(--text);
-    font-family:var(--font-body); line-height:1.5; -webkit-font-smoothing:antialiased;
-  }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
   a{ color:inherit; text-decoration:none; }
-  img{ max-width:100%; display:block; }
-  ul{ list-style:none; }
   button{ font-family:inherit; cursor:pointer; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 20px; }
 
-  .wrap{ max-width:1240px; margin:0 auto; padding:0 20px; }
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
 
-  /* ---------- corner-bracket signature element ---------- */
-  .bracket{
-    position:relative; border:1px solid var(--line); background:var(--bg-card);
-  }
-  .bracket::before, .bracket::after{
-    content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85;
-  }
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
   .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
   .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
 
-  /* ---------- header / nav ---------- */
-  header{
-    position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92);
-    backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
-  }
-  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
-  .brand{
-    font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:.03em;
-    display:flex; align-items:center; gap:8px;
-  }
-  .brand .flame{ color:var(--amber); }
-  .nav-links{ display:flex; align-items:center; gap:2px; }
-  .nav-links a{
-    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.03em; text-transform:uppercase;
-    color:var(--text-dim); padding:10px 12px; border-bottom:2px solid transparent;
-    transition:color .15s ease, border-color .15s ease;
-  }
-  .nav-links a:hover, .nav-links a:focus-visible{ color:var(--text); }
-  .nav-links a.active{ color:var(--amber); border-color:var(--amber); }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
 
-  .nav-right{ display:flex; align-items:center; gap:10px; }
-  .icon-btn{
-    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
-    background:transparent; border:1px solid var(--line); color:var(--text-dim);
+  .page-head{ padding:44px 0 24px; border-bottom:1px solid var(--line); }
+  .page-head h1{ font-family:var(--font-display); font-weight:700; font-size:38px; text-transform:uppercase; margin-top:8px; }
+
+  .tabs{ display:flex; gap:2px; margin:28px 0 0; }
+  .tabs button{
+    background:transparent; border:1px solid var(--line); border-bottom:none; color:var(--text-dim); padding:11px 18px;
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase;
   }
-  .icon-btn:hover{ border-color:var(--amber); color:var(--amber); }
-  .icon-btn svg{ width:18px; height:18px; }
+  .tabs button.active{ color:var(--amber); background:var(--bg-card); border-color:var(--amber); }
+
+  section{ padding:32px 0 60px; }
+  .event-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+
+  .event-card{ overflow:hidden; }
+  .event-card .thumb{ aspect-ratio:16/9; background:linear-gradient(135deg,#22262a,#141618); position:relative; overflow:hidden; }
+  .event-card .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .event-card .body{ padding:16px; }
+  .event-card h3{ font-family:var(--font-display); font-weight:600; font-size:18px; }
+  .event-card .dates{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-top:6px; letter-spacing:.03em; }
+  .event-card p{ font-size:13px; color:var(--text-dim); margin-top:10px; }
+
+  .status-pill{ position:absolute; top:10px; left:10px; font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; padding:4px 9px; }
+  .status-pill.current{ background:var(--red-alert); color:#fff; display:flex; align-items:center; gap:5px; }
+  .status-pill.current .dot{ width:5px; height:5px; border-radius:50%; background:#fff; animation:pulse 1.4s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+  .status-pill.upcoming{ background:var(--amber); color:#151505; }
+  .status-pill.completed{ background:var(--bg-raised); color:var(--text-faint); border:1px solid var(--line); }
 
   .btn-primary{
-    font-family:var(--font-mono); font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
-    background:var(--amber); color:#151505; padding:10px 18px; border:none;
-    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
-    transition:filter .15s ease;
-  }
-  .btn-primary:hover{ filter:brightness(1.1); }
-
-  .btn-ghost{
-    font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
-    background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line);
-  }
-  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
-  .menu-toggle{ display:none; }
-
-  /* ---------- page header ---------- */
-  .page-header {
-    padding: 60px 0 40px; border-bottom: 1px solid var(--line);
-    background: radial-gradient(ellipse at 50% 0%, rgba(255,176,32,.08), transparent 70%);
-    text-align: center;
-  }
-  .page-header h1 {
-    font-family: var(--font-display); font-size: 48px; text-transform: uppercase;
-    letter-spacing: .02em; margin-bottom: 10px;
-  }
-  .page-header p { color: var(--text-dim); font-size: 16px; }
-
-  /* ---------- event specific styles ---------- */
-  section{ padding:60px 0; border-bottom:1px solid var(--line); }
-  .section-title {
-    font-family: var(--font-display); font-size: 26px; text-transform: uppercase;
-    letter-spacing: .02em; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;
-  }
-  .grid-events { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  
-  .event-card { display: flex; flex-direction: column; overflow: hidden; }
-  .event-card .thumb { aspect-ratio: 16/7; position: relative; background: #141618; }
-  .event-card .thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s; }
-  .event-card:hover .thumb img { opacity: 1; }
-  
-  .event-badge {
-    position: absolute; top: 12px; left: 12px; font-family: var(--font-mono); font-size: 11px;
-    letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px;
-    background: var(--red-alert); color: #fff;
-  }
-  .event-badge.ongoing { background: var(--green-alert); color: #0d0f11; font-weight: 600; }
-  
-  .event-timer {
-    position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.7);
-    padding: 6px 10px; font-family: var(--font-mono); font-size: 12px; color: var(--amber); border: 1px solid var(--amber);
+    display:inline-block; margin-top:14px;
+    font-family:var(--font-mono); font-size:11.5px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--amber); color:#151505; padding:9px 16px; border:none;
+    clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
   }
 
-  .event-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-  .event-body h3 { font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; text-transform: uppercase; }
-  .event-body p { color: var(--text-dim); font-size: 14px; margin-bottom: 16px; flex-grow: 1; }
-  .event-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 16px; }
-  .event-dates { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+  .progress-track{ height:5px; background:var(--bg-raised); margin-top:12px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--amber); }
 
-  /* footer */
-  footer{ padding:48px 0 28px; }
-  .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:32px; margin-bottom:36px; }
-  footer h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
-  footer li{ margin-bottom:9px; font-size:13.5px; color:var(--text-dim); }
-  footer li a:hover{ color:var(--amber); }
-  .foot-brand p{ color:var(--text-dim); font-size:13.5px; margin-top:10px; max-width:340px; }
-  .foot-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:24px; border-top:1px solid var(--line); font-family:var(--font-mono); font-size:11px; color:var(--text-faint); flex-wrap:wrap; gap:10px; }
-  .social-row{ display:flex; gap:10px; }
+  .empty-state{ padding:60px 20px; text-align:center; color:var(--text-dim); font-size:13.5px; grid-column:1/-1; }
+  .empty-state svg{ width:36px; height:36px; color:var(--text-faint); margin-bottom:12px; }
 
-  /* ---------- responsive ---------- */
-  @media(max-width:1080px){
-    .nav-links{ display:none; }
-    .menu-toggle{ display:flex; }
-    .grid-events{ grid-template-columns: 1fr; }
-    .foot-grid{ grid-template-columns:1fr 1fr; }
-  }
-  @media(max-width:560px){
-    .foot-grid{ grid-template-columns:1fr; }
-  }
+  .skel{ background:linear-gradient(90deg,var(--bg-card) 0%,#23282d 50%,var(--bg-card) 100%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+  @keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
-  .mobile-menu{ display:none; flex-direction:column; background:var(--bg-raised); border-bottom:1px solid var(--line); }
-  .mobile-menu.open{ display:flex; }
-  .mobile-menu a{ padding:14px 20px; border-bottom:1px solid var(--line); font-family:var(--font-mono); font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); }
-  .mobile-menu a.active{ color:var(--amber); }
+  @media(max-width:900px){ .event-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:560px){ .event-grid{ grid-template-columns:1fr; } .tabs{ flex-wrap:wrap; } }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
 </style>
 </head>
 <body>
@@ -167,150 +92,34 @@
 <header>
   <div class="wrap navbar">
     <a href="index.html" class="brand">
-      <svg class="flame" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/>
-      </svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
       FREE FIRE HUB
     </a>
-
-    <nav class="nav-links" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="news.html">News</a>
-      <a href="events.html" class="active">Events</a>
-      <a href="redeem-codes.html">Redeem</a>
-      <a href="sensitivity.html">Sensitivity</a>
-      <a href="weapons.html">Weapons</a>
-      <a href="characters.html">Characters</a>
-      <a href="bundles.html">Bundles</a>
-      <a href="videos.html">Videos</a>
-      <a href="live.html">Live</a>
-      <a href="tournaments.html">Tournaments</a>
-      <a href="community.html">Community</a>
-    </nav>
-
-    <div class="nav-right">
-      <button class="icon-btn" id="searchBtn" aria-label="Search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
-      <a href="login.html" class="btn-ghost" id="authBtn">Login</a>
-      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-    </div>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
   </div>
-
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="news.html">News</a>
-    <a href="events.html" class="active">Events</a>
-    <a href="redeem-codes.html">Redeem Codes</a>
-    </div>
 </header>
 
-<div class="page-header">
-  <div class="wrap">
-    <h1>Events & Calendar</h1>
-    <p>Track active in-game events, claim free rewards, and see what's coming next.</p>
+<div class="page-head wrap">
+  <div class="eyebrow">In-Game Events</div>
+  <h1>Events</h1>
+  <div class="tabs">
+    <button data-tab="current" class="active">Current</button>
+    <button data-tab="upcoming">Upcoming</button>
+    <button data-tab="completed">Completed</button>
   </div>
 </div>
 
-<section id="active-events">
-  <div class="wrap">
-    <h2 class="section-title">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Active Events
-    </h2>
-    <div class="grid-events">
-      
-      <div class="event-card bracket">
-        <div class="thumb">
-          <div class="event-badge ongoing">Ongoing</div>
-          <div class="event-timer" data-end="2024-06-05T23:59:59">Ends in: --:--:--</div>
-        </div>
-        <div class="event-body">
-          <h3>Booyah Day 2024</h3>
-          <p>Complete daily missions to collect Booyah Tokens. Exchange tokens for exclusive bundles, weapon skins, and the new emote.</p>
-          <div class="event-meta">
-            <span class="event-dates">May 25 - Jun 05, 2024</span>
-            <a href="event-detail.html" class="btn-primary">Details</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-card bracket">
-        <div class="thumb">
-          <div class="event-badge ongoing">Ongoing</div>
-          <div class="event-timer" data-end="2024-05-30T23:59:59">Ends in: --:--:--</div>
-        </div>
-        <div class="event-body">
-          <h3>100% Bonus Top-Up</h3>
-          <p>Get double diamonds on your first top-up during the event period. Claim your bonus instantly through the event tab.</p>
-          <div class="event-meta">
-            <span class="event-dates">May 22 - May 30, 2024</span>
-            <a href="event-detail.html" class="btn-primary">Details</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
+<section class="wrap">
+  <div class="event-grid" id="eventGrid">
+    <div class="event-card bracket"><div class="thumb skel"></div><div class="body"><h3>Loading…</h3></div></div>
+    <div class="event-card bracket"><div class="thumb skel"></div><div class="body"><h3>Loading…</h3></div></div>
+    <div class="event-card bracket"><div class="thumb skel"></div><div class="body"><h3>Loading…</h3></div></div>
   </div>
 </section>
-
-<section id="upcoming-events" style="border-bottom: none;">
-  <div class="wrap">
-    <h2 class="section-title">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-      Upcoming Events
-    </h2>
-    <div class="grid-events">
-      
-      <div class="event-card bracket" style="opacity: 0.7;">
-        <div class="thumb">
-          <div class="event-badge">Starts Soon</div>
-        </div>
-        <div class="event-body">
-          <h3>Rampage: New Dawn</h3>
-          <p>The legendary Rampage event returns! Prepare your squads for massive rewards and a brand new game mode.</p>
-          <div class="event-meta">
-            <span class="event-dates">Expected: Jun 10, 2024</span>
-            <button class="btn-ghost" disabled>Locked</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a href="index.html" class="brand">
-          <svg class="flame" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
-          FREE FIRE HUB
-        </a>
-        <p>Fan-made hub for Free Fire news, events, redeem codes and community.</p>
-      </div>
-      <div>
-        <h4>Quick Links</h4>
-        <ul><li><a href="index.html">Home</a></li><li><a href="community.html">Community</a></li><li><a href="contact.html">Contact</a></li></ul>
-      </div>
-      <div>
-        <h4>Categories</h4>
-        <ul><li><a href="news.html">News</a></li><li><a href="events.html">Events</a></li><li><a href="redeem-codes.html">Redeem Codes</a></li></ul>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span>© 2024 Free Fire Fan Hub. Unofficial fan site.</span>
-      <span id="buildTag">v1.0 · Events module</span>
-    </div>
-  </div>
-</footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
@@ -318,58 +127,96 @@
     projectId: "freefire-6e80e",
     storageBucket: "freefire-6e80e.firebasestorage.app",
     messagingSenderId: "249508261364",
-    appId: "1:249508261364:web:b846118ee5952e3b099da1"
+    appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  onAuthStateChanged(auth, (user) => {
-    const authBtn = document.getElementById("authBtn");
-    if (user) {
-      authBtn.textContent = user.displayName ? user.displayName.split(" ")[0] : "Profile";
-      authBtn.href = "profile.html";
-    } else {
-      authBtn.textContent = "Login";
-      authBtn.href = "login.html";
-    }
-  });
-</script>
+  let activeTab = "current";
+  let allEvents = [];
 
-<script>
-  // Mobile Menu Toggle
-  const menuToggle = document.getElementById("menuToggle");
-  const mobileMenu = document.getElementById("mobileMenu");
-  menuToggle.addEventListener("click", () => {
-    mobileMenu.classList.toggle("open");
-  });
+  const FALLBACK = [
+    { id:"fb1", title:"Booyah Day 2024", status:"current", startDate:"May 25, 2024", endDate:"Jun 5, 2024", desc:"7-stage reward event with exclusive bundle rewards.", progress:45 },
+    { id:"fb2", title:"Rampage: Fury", status:"upcoming", startDate:"May 18, 2024", endDate:"Jun 1, 2024", desc:"The Rampage storyline continues with new character lore.", progress:0 },
+    { id:"fb3", title:"Mystery Shop", status:"current", startDate:"May 15, 2024", endDate:"May 28, 2024", desc:"Discounted mystery bundles refreshed daily.", progress:70 },
+    { id:"fb4", title:"Faded Wheel", status:"completed", startDate:"May 14, 2024", endDate:"May 27, 2024", desc:"Spin the wheel for exclusive faded-theme skins.", progress:100 },
+  ];
 
-  // Countdown Timers Logic
-  function updateTimers() {
-    const timers = document.querySelectorAll('.event-timer');
-    const now = new Date();
-
-    timers.forEach(timer => {
-      const endDate = new Date(timer.getAttribute('data-end'));
-      const diff = endDate - now;
-
-      if (diff <= 0) {
-        timer.textContent = "Ended";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const mins = Math.floor((diff / 1000 / 60) % 60);
-
-      timer.textContent = `Ends in: ${days}d ${hours}h ${mins}m`;
-    });
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
 
-  setInterval(updateTimers, 60000);
-  updateTimers(); // Initial call
-</script>
+  async function loadEvents(){
+    try {
+      const q = query(collection(db, "events"), orderBy("startDate", "desc"));
+      const snap = await getDocs(q);
+      if (snap.empty) { allEvents = FALLBACK; render(); return; }
+      allEvents = snap.docs.map(d => {
+        const v = d.data();
+        return {
+          id: d.id,
+          title: v.title || "Untitled Event",
+          status: v.status || "current",
+          startDate: v.startDate?.toDate ? v.startDate.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short"}) : (v.startDateText || ""),
+          endDate: v.endDate?.toDate ? v.endDate.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : (v.endDateText || ""),
+          desc: v.description || "",
+          progress: v.progress ?? 0,
+          imageUrl: v.imageUrl || ""
+        };
+      });
+      render();
+    } catch (e) {
+      console.warn("events fetch failed, using fallback:", e.message);
+      allEvents = FALLBACK;
+      render();
+    }
+  }
 
+  function cardHtml(ev){
+    const statusLabel = { current:"Live Now", upcoming:"Upcoming", completed:"Completed" }[ev.status] || ev.status;
+    return `
+    <div class="event-card bracket">
+      <div class="thumb">
+        ${ev.imageUrl ? `<img src="${ev.imageUrl}" alt="${escapeHtml(ev.title)}">` : ""}
+        <span class="status-pill ${ev.status}">${ev.status === 'current' ? '<span class="dot"></span>' : ''}${statusLabel}</span>
+      </div>
+      <div class="body">
+        <h3>${escapeHtml(ev.title)}</h3>
+        <div class="dates">${ev.startDate} – ${ev.endDate}</div>
+        <p>${escapeHtml(ev.desc)}</p>
+        ${ev.status === 'current' ? `
+          <div class="progress-track"><div class="progress-fill" style="width:${ev.progress}%"></div></div>
+        ` : ''}
+        ${ev.status !== 'completed' ? `<a href="#" class="btn-primary">View Details</a>` : ''}
+      </div>
+    </div>`;
+  }
+
+  function render(){
+    const grid = document.getElementById("eventGrid");
+    const filtered = allEvents.filter(e => e.status === activeTab);
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div>இந்த category-ல events இல்ல.</div>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = filtered.map(cardHtml).join("");
+  }
+
+  document.querySelectorAll(".tabs button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      render();
+    });
+  });
+
+  loadEvents();
+</script>
 </body>
 </html>
-
