@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Free Fire Fan Hub</title>
+<meta name="description" content="Login or create an account on Free Fire Fan Hub.">
+
+<style>
+  :root{
+    --bg:            #0d0f11;
+    --bg-raised:     #15181b;
+    --bg-card:       #1a1e22;
+    --line:          #2a2f34;
+    --amber:         #ffb020;
+    --red-alert:     #ff4b3e;
+    --green-ok:      #34c77b;
+    --text:          #eef1f3;
+    --text-dim:      #8b939a;
+    --text-faint:    #565d63;
+    --font-display:  'Rajdhani', 'Oswald', 'Arial Narrow', sans-serif;
+    --font-body:     'Inter', 'Segoe UI', sans-serif;
+    --font-mono:     'JetBrains Mono', 'Consolas', monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255,176,32,.08), transparent 50%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .brand-top{
+    position:fixed; top:24px; left:24px;
+    font-family:var(--font-display); font-weight:700; font-size:18px;
+    display:flex; align-items:center; gap:8px; letter-spacing:.03em;
+  }
+  .brand-top svg{ color:var(--amber); }
+
+  .auth-card{
+    width:100%; max-width:420px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    position:relative;
+    padding:38px 34px 32px;
+  }
+  .auth-card::before, .auth-card::after{
+    content:""; position:absolute; width:16px; height:16px; border:2px solid var(--amber); opacity:.85;
+  }
+  .auth-card::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .auth-card::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber);
+    display:flex; align-items:center; gap:8px; margin-bottom:8px;
+  }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
+
+  h1{ font-family:var(--font-display); font-weight:700; font-size:30px; text-transform:uppercase; margin-bottom:6px; }
+  .sub{ color:var(--text-dim); font-size:13.5px; margin-bottom:26px; }
+
+  .tabs{ display:flex; border:1px solid var(--line); margin-bottom:24px; }
+  .tabs button{
+    flex:1; background:transparent; border:none; color:var(--text-dim);
+    padding:11px 0; font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    border-bottom:2px solid transparent;
+  }
+  .tabs button.active{ color:var(--amber); border-color:var(--amber); background:rgba(255,176,32,.06); }
+
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:7px;
+  }
+  .input-wrap{ position:relative; }
+  .input-wrap svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; color:var(--text-faint);
+  }
+  input{
+    width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text);
+    font-family:var(--font-body); font-size:14px;
+    padding:12px 12px 12px 38px;
+    transition:border-color .15s ease;
+  }
+  input:focus{ outline:none; border-color:var(--amber); }
+  input::placeholder{ color:var(--text-faint); }
+
+  .toggle-pass{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:var(--text-faint); padding:4px;
+  }
+  .toggle-pass svg{ position:static; width:16px; height:16px; }
+
+  .row-between{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; font-size:12.5px; }
+  .row-between a{ color:var(--amber); }
+  .remember{ display:flex; align-items:center; gap:7px; color:var(--text-dim); }
+  .remember input{ width:auto; padding:0; accent-color:var(--amber); }
+
+  .btn-primary{
+    width:100%;
+    font-family:var(--font-mono); font-size:13px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--amber); color:#151505;
+    padding:13px 0; border:none;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-primary:disabled{ opacity:.55; cursor:not-allowed; filter:none; }
+
+  .divider{ display:flex; align-items:center; gap:12px; margin:22px 0; color:var(--text-faint); font-size:11px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; }
+  .divider::before, .divider::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+  .btn-google{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+    background:var(--bg-raised); border:1px solid var(--line); color:var(--text);
+    font-size:13.5px; font-weight:500; padding:11px 0;
+  }
+  .btn-google:hover{ border-color:var(--text-dim); }
+
+  .switch-line{ text-align:center; margin-top:22px; font-size:13px; color:var(--text-dim); }
+  .switch-line button{ background:none; border:none; color:var(--amber); font-size:13px; padding:0; }
+
+  .alert{
+    display:none; align-items:flex-start; gap:8px;
+    font-size:12.5px; padding:10px 12px; margin-bottom:16px;
+    border:1px solid; font-family:var(--font-body);
+  }
+  .alert.show{ display:flex; }
+  .alert.error{ border-color:rgba(255,75,62,.4); background:rgba(255,75,62,.08); color:#ff8a80; }
+  .alert.ok{ border-color:rgba(52,199,123,.4); background:rgba(52,199,123,.08); color:#7ee7ab; }
+  .alert svg{ width:15px; height:15px; flex-shrink:0; margin-top:1px; }
+
+  .spinner{
+    width:14px; height:14px; border:2px solid rgba(0,0,0,.25); border-top-color:#151505;
+    border-radius:50%; animation:spin .6s linear infinite; display:none;
+  }
+  .spinner.show{ display:inline-block; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  @media(max-width:480px){
+    .auth-card{ padding:30px 22px 26px; }
+    h1{ font-size:26px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="brand-top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+  FREE FIRE HUB
+</a>
+
+<div class="auth-card">
+  <div class="eyebrow">Account Access</div>
+  <h1 id="titleText">Welcome Back</h1>
+  <p class="sub" id="subText">Login to claim redeem codes, save posts and join the community.</p>
+
+  <div class="tabs">
+    <button type="button" id="tabLogin" class="active">Login</button>
+    <button type="button" id="tabSignup">Sign Up</button>
+  </div>
+
+  <div class="alert error" id="errorBox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span id="errorText"></span>
+  </div>
+  <div class="alert ok" id="okBox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+    <span id="okText"></span>
+  </div>
+
+  <form id="authForm">
+    <div class="field" id="nameField" style="display:none;">
+      <label for="nameInput">In-game Name</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 10-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        <input type="text" id="nameInput" placeholder="FF King" autocomplete="name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="emailInput">Email</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+        <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="passInput">Password</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <input type="password" id="passInput" placeholder="••••••••" autocomplete="current-password" minlength="6" required>
+        <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="row-between" id="rememberRow">
+      <label class="remember"><input type="checkbox" id="rememberMe"> Remember me</label>
+      <button type="button" id="forgotBtn" style="background:none;border:none;">Forgot password?</button>
+    </div>
+
+    <button type="submit" class="btn-primary" id="submitBtn">
+      <span class="spinner" id="spinner"></span>
+      <span id="submitLabel">Login</span>
+    </button>
+  </form>
+
+  <div class="divider">or continue with</div>
+
+  <button type="button" class="btn-google" id="googleBtn">
+    <svg width="18" height="18" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 01-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.26v3.1A12 12 0 0012 24z"/>
+      <path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 014.9 12c0-.79.14-1.56.37-2.28v-3.1H1.26A12 12 0 000 12c0 1.94.46 3.77 1.26 5.38l4.01-3.1z"/>
+      <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.59 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.26 6.62l4.01 3.1C6.22 6.86 8.87 4.75 12 4.75z"/>
+    </svg>
+    Continue with Google
+  </button>
+
+  <p class="switch-line" id="switchLine">
+    Don't have an account? <button type="button" id="switchBtn">Sign up</button>
+  </p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, onAuthStateChanged,
+    signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    signInWithPopup, GoogleAuthProvider,
+    sendPasswordResetEmail, updateProfile,
+    setPersistence, browserLocalPersistence, browserSessionPersistence
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
+    authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e",
+    storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364",
+    appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  let mode = "login"; // or "signup"
+
+  // ---- redirect if already logged in ----
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const params = new URLSearchParams(window.location.search);
+      window.location.href = params.get("redirect") || "profile.html";
+    }
+  });
+
+  // ---- DOM refs ----
+  const tabLogin = document.getElementById("tabLogin");
+  const tabSignup = document.getElementById("tabSignup");
+  const nameField = document.getElementById("nameField");
+  const rememberRow = document.getElementById("rememberRow");
+  const titleText = document.getElementById("titleText");
+  const subText = document.getElementById("subText");
+  const submitLabel = document.getElementById("submitLabel");
+  const switchLine = document.getElementById("switchLine");
+  const switchBtn = document.getElementById("switchBtn");
+  const errorBox = document.getElementById("errorBox");
+  const errorText = document.getElementById("errorText");
+  const okBox = document.getElementById("okBox");
+  const okText = document.getElementById("okText");
+  const form = document.getElementById("authForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const spinner = document.getElementById("spinner");
+
+  function setMode(newMode){
+    mode = newMode;
+    clearAlerts();
+    const isSignup = mode === "signup";
+    tabLogin.classList.toggle("active", !isSignup);
+    tabSignup.classList.toggle("active", isSignup);
+    nameField.style.display = isSignup ? "block" : "none";
+    rememberRow.style.display = isSignup ? "none" : "flex";
+    titleText.textContent = isSignup ? "Create Account" : "Welcome Back";
+    subText.textContent = isSignup
+      ? "Join the community, save your favourites and get personalised alerts."
+      : "Login to claim redeem codes, save posts and join the community.";
+    submitLabel.textContent = isSignup ? "Create Account" : "Login";
+    switchLine.innerHTML = isSignup
+      ? `Already have an account? <button type="button" id="switchBtn2">Login</button>`
+      : `Don't have an account? <button type="button" id="switchBtn2">Sign up</button>`;
+    document.getElementById("switchBtn2").addEventListener("click", () => setMode(isSignup ? "login" : "signup"));
+  }
+  tabLogin.addEventListener("click", () => setMode("login"));
+  tabSignup.addEventListener("click", () => setMode("signup"));
+  switchBtn.addEventListener("click", () => setMode("signup"));
+
+  function clearAlerts(){
+    errorBox.classList.remove("show");
+    okBox.classList.remove("show");
+  }
+  function showError(msg){ clearAlerts(); errorText.textContent = msg; errorBox.classList.add("show"); }
+  function showOk(msg){ clearAlerts(); okText.textContent = msg; okBox.classList.add("show"); }
+
+  function friendlyError(err){
+    const map = {
+      "auth/invalid-email": "தவறான email முகவரி.",
+      "auth/user-not-found": "இந்த email-க்கு account இல்லை.",
+      "auth/wrong-password": "தவறான password.",
+      "auth/invalid-credential": "Email அல்லது password தவறு.",
+      "auth/email-already-in-use": "இந்த email ஏற்கனவே பயன்படுத்தப்பட்டுள்ளது.",
+      "auth/weak-password": "Password குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.",
+      "auth/too-many-requests": "அதிக முயற்சிகள். சிறிது நேரம் கழித்து முயற்சி செய்யவும்.",
+      "auth/popup-closed-by-user": "Google login பாதியில் நிறுத்தப்பட்டது.",
+      "auth/network-request-failed": "Network பிரச்சனை. மீண்டும் முயற்சி செய்யவும்."
+    };
+    return map[err.code] || err.message || "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சி செய்யவும்.";
+  }
+
+  function setLoading(loading){
+    submitBtn.disabled = loading;
+    spinner.classList.toggle("show", loading);
+    submitLabel.style.opacity = loading ? .6 : 1;
+  }
+
+  // ---- toggle password visibility ----
+  document.getElementById("togglePass").addEventListener("click", () => {
+    const input = document.getElementById("passInput");
+    input.type = input.type === "password" ? "text" : "password";
+  });
+
+  // ---- form submit: login or signup ----
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearAlerts();
+    const email = document.getElementById("emailInput").value.trim();
+    const pass  = document.getElementById("passInput").value;
+
+    if (!email || !pass) { showError("எல்லா fields-ஐயும் நிரப்பவும்."); return; }
+
+    setLoading(true);
+    try {
+      if (mode === "signup") {
+        const name = document.getElementById("nameInput").value.trim();
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        if (name) await updateProfile(cred.user, { displayName: name });
+        await setDoc(doc(db, "users", cred.user.uid), {
+          displayName: name || email.split("@")[0],
+          email,
+          role: "user",
+          createdAt: serverTimestamp()
+        });
+      } else {
+        const persistence = document.getElementById("rememberMe").checked
+          ? browserLocalPersistence
+          : browserSessionPersistence;
+        await setPersistence(auth, persistence);
+        await signInWithEmailAndPassword(auth, email, pass);
+      }
+      // onAuthStateChanged handles the redirect
+    } catch (err) {
+      showError(friendlyError(err));
+      setLoading(false);
+    }
+  });
+
+  // ---- Google sign-in ----
+  document.getElementById("googleBtn").addEventListener("click", async () => {
+    clearAlerts();
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await setDoc(doc(db, "users", result.user.uid), {
+        displayName: result.user.displayName || "",
+        email: result.user.email || "",
+        photoURL: result.user.photoURL || "",
+        role: "user",
+        lastLogin: serverTimestamp()
+      }, { merge: true });
+    } catch (err) {
+      if (err.code !== "auth/popup-closed-by-user") showError(friendlyError(err));
+    }
+  });
+
+  // ---- forgot password ----
+  document.getElementById("forgotBtn").addEventListener("click", async () => {
+    const email = document.getElementById("emailInput").value.trim();
+    if (!email) { showError("முதலில் email-ஐ type பண்ணவும், பிறகு 'Forgot password' அழுத்தவும்."); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showOk("Password reset link உங்க email-க்கு அனுப்பப்பட்டது.");
+    } catch (err) {
+      showError(friendlyError(err));
+    }
+  });
+</script>
+</body>
+</html>
