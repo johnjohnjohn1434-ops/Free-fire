@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weapons — Free Fire Fan Hub</title>
+<meta name="description" content="Free Fire weapon stats: damage, range, accuracy, magazine and reload speed.">
+<style>
+  :root{
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b;
+    --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif;
+    --font-body:'Inter','Segoe UI',sans-serif;
+    --font-mono:'JetBrains Mono','Consolas',monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
+  a{ color:inherit; text-decoration:none; } button{ font-family:inherit; cursor:pointer; } img{ max-width:100%; display:block; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 20px; }
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
+  .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
+  .page-head{ padding:44px 0 24px; border-bottom:1px solid var(--line); }
+  .page-head h1{ font-family:var(--font-display); font-weight:700; font-size:38px; text-transform:uppercase; margin-top:8px; }
+  .chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:22px; }
+  .chip{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:9px 14px; }
+  .chip.active{ border-color:var(--amber); color:var(--amber); background:rgba(255,176,32,.06); }
+  section{ padding:32px 0 60px; }
+  .layout{ display:grid; grid-template-columns:280px 1fr; gap:20px; }
+  .list{ display:flex; flex-direction:column; gap:8px; max-height:640px; overflow-y:auto; }
+  .list-item{ display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line); background:var(--bg-card); }
+  .list-item.active{ border-color:var(--amber); background:rgba(255,176,32,.06); }
+  .list-item .icon{ width:38px; height:38px; background:var(--bg-raised); flex-shrink:0; }
+  .list-item .name{ font-family:var(--font-display); font-weight:600; font-size:14.5px; }
+  .list-item .type{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-transform:uppercase; }
+
+  .detail{ padding:28px; }
+  .detail-top{ display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-bottom:26px; }
+  .detail-img{ width:120px; height:120px; background:var(--bg-raised); flex-shrink:0; }
+  .detail-img img{ width:100%; height:100%; object-fit:contain; }
+  .detail h2{ font-family:var(--font-display); font-weight:700; font-size:28px; text-transform:uppercase; }
+  .detail .type{ font-family:var(--font-mono); font-size:11.5px; color:var(--amber); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
+  .detail p.desc{ color:var(--text-dim); font-size:13.5px; margin-top:10px; max-width:520px; }
+
+  .stat-list{ display:flex; flex-direction:column; gap:16px; max-width:520px; }
+  .stat-row{ display:grid; grid-template-columns:110px 1fr 40px; align-items:center; gap:12px; }
+  .stat-row .label{ font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); }
+  .stat-track{ height:8px; background:var(--bg-raised); position:relative; overflow:hidden; }
+  .stat-fill{ height:100%; background:linear-gradient(90deg,var(--amber),#ffd580); }
+  .stat-val{ font-family:var(--font-mono); font-size:12px; text-align:right; color:var(--text-faint); }
+
+  @media(max-width:820px){ .layout{ grid-template-columns:1fr; } .list{ max-height:260px; flex-direction:row; overflow-x:auto; overflow-y:hidden; } .list-item{ min-width:170px; } }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap navbar">
+    <a href="index.html" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+      FREE FIRE HUB
+    </a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</header>
+
+<div class="page-head wrap">
+  <div class="eyebrow">Weapon Database</div>
+  <h1>Weapons</h1>
+  <div class="chip-row" id="typeChips">
+    <button class="chip active" data-type="all">All</button>
+    <button class="chip" data-type="AR">AR</button>
+    <button class="chip" data-type="SMG">SMG</button>
+    <button class="chip" data-type="Shotgun">Shotgun</button>
+    <button class="chip" data-type="Sniper">Sniper</button>
+    <button class="chip" data-type="Pistol">Pistol</button>
+  </div>
+</div>
+
+<section class="wrap layout">
+  <div class="list bracket" id="weaponList" style="border:1px solid var(--line); padding:10px;"></div>
+  <div class="detail bracket" id="weaponDetail"></div>
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278", authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e", storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364", appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const FALLBACK = [
+    { id:"m1014", name:"M1014", type:"Shotgun", desc:"Fully-automatic shotgun with high close-range burst damage.", stats:{ damage:78, range:35, accuracy:40, magazine:60, reload:45 } },
+    { id:"ak47", name:"AK47", type:"AR", desc:"High damage assault rifle with strong recoil at range.", stats:{ damage:75, range:65, accuracy:55, magazine:50, reload:50 } },
+    { id:"m1887", name:"M1887", type:"Shotgun", desc:"Pump-action shotgun, extremely lethal in close quarters.", stats:{ damage:95, range:25, accuracy:35, magazine:15, reload:40 } },
+    { id:"mp40", name:"MP40", type:"SMG", desc:"Balanced SMG with fast fire rate and low recoil.", stats:{ damage:52, range:40, accuracy:60, magazine:55, reload:60 } },
+    { id:"awm", name:"AWM", type:"Sniper", desc:"Two-shot-kill bolt-action sniper, airdrop exclusive.", stats:{ damage:98, range:95, accuracy:85, magazine:20, reload:35 } },
+    { id:"deagle", name:"Desert Eagle", type:"Pistol", desc:"High-damage sidearm with strong headshot multiplier.", stats:{ damage:70, range:45, accuracy:50, magazine:20, reload:55 } },
+  ];
+
+  let items = [];
+  let activeType = "all";
+  let selectedId = null;
+
+  async function load(){
+    try {
+      const snap = await getDocs(collection(db, "weapons"));
+      items = snap.empty ? FALLBACK : snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    } catch (e) { console.warn("weapons load failed:", e.message); items = FALLBACK; }
+    selectedId = items[0]?.id;
+    render();
+  }
+
+  function escapeHtml(str){ return String(str??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function render(){
+    const filtered = activeType === "all" ? items : items.filter(i => i.type === activeType);
+    const list = document.getElementById("weaponList");
+    if (!filtered.length) { list.innerHTML = `<div style="padding:20px;color:var(--text-dim);font-size:13px;">எதுவும் இல்ல.</div>`; document.getElementById("weaponDetail").innerHTML = ""; return; }
+    list.innerHTML = filtered.map(w => `
+      <button class="list-item ${w.id===selectedId?'active':''}" data-id="${w.id}" style="width:100%;">
+        <div class="icon">${w.imageUrl ? `<img src="${w.imageUrl}" alt="" style="width:100%;height:100%;object-fit:contain;">`:''}</div>
+        <div style="text-align:left;"><div class="name">${escapeHtml(w.name)}</div><div class="type">${escapeHtml(w.type)}</div></div>
+      </button>`).join("");
+    list.querySelectorAll(".list-item").forEach(btn => btn.addEventListener("click", () => { selectedId = btn.dataset.id; render(); }));
+
+    const sel = items.find(i => i.id === selectedId) || filtered[0];
+    if (!sel) return;
+    const statLabels = { damage:"Damage", range:"Range", accuracy:"Accuracy", magazine:"Magazine", reload:"Reload Speed" };
+    document.getElementById("weaponDetail").innerHTML = `
+      <div class="detail-top">
+        <div class="detail-img">${sel.imageUrl ? `<img src="${sel.imageUrl}" alt="">`:''}</div>
+        <div>
+          <h2>${escapeHtml(sel.name)}</h2>
+          <div class="type">${escapeHtml(sel.type)}</div>
+          <p class="desc">${escapeHtml(sel.desc||'')}</p>
+        </div>
+      </div>
+      <div class="stat-list">
+        ${Object.entries(sel.stats||{}).map(([k,v]) => `
+          <div class="stat-row">
+            <div class="label">${statLabels[k]||k}</div>
+            <div class="stat-track"><div class="stat-fill" style="width:${v}%"></div></div>
+            <div class="stat-val">${v}</div>
+          </div>`).join("")}
+      </div>`;
+  }
+
+  document.querySelectorAll("#typeChips .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#typeChips .chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeType = chip.dataset.type;
+      const filtered = activeType === "all" ? items : items.filter(i => i.type === activeType);
+      if (filtered.length) selectedId = filtered[0].id;
+      render();
+    });
+  });
+
+  load();
+</script>
+</body>
+</html>
