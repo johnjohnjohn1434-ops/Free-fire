@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Free Fire Fan Hub</title>
+
+<style>
+  :root{
+    --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
+    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b;
+    --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
+    --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif;
+    --font-body:'Inter','Segoe UI',sans-serif;
+    --font-mono:'JetBrains Mono','Consolas',monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 20px; }
+
+  header{ position:sticky; top:0; z-index:100; background:rgba(13,15,17,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; gap:8px; }
+  .brand svg{ color:var(--amber); }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid var(--line); color:var(--text-dim); }
+  .icon-btn svg{ width:18px; height:18px; }
+  .btn-ghost{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:transparent; color:var(--text); padding:9px 16px; border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+
+  .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
+  .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
+  .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:8px; }
+  .eyebrow::before{ content:""; width:16px; height:1px; background:var(--amber); }
+
+  /* ---- gate / loading ---- */
+  #authGate{ min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:40px 20px; }
+  #authGate p{ color:var(--text-dim); font-size:14px; max-width:340px; }
+  .spinner-lg{ width:32px; height:32px; border:3px solid var(--line); border-top-color:var(--amber); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ---- profile hero ---- */
+  .profile-hero{ padding:44px 0 36px; border-bottom:1px solid var(--line); display:none; }
+  .profile-top{ display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .avatar{
+    width:84px; height:84px; border-radius:50%; overflow:hidden; flex-shrink:0;
+    background:linear-gradient(135deg,#2a2f34,#15181b); display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--amber); font-family:var(--font-display); font-size:30px; font-weight:700; color:var(--amber);
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; }
+  .profile-name{ font-family:var(--font-display); font-weight:700; font-size:28px; text-transform:uppercase; }
+  .profile-email{ font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); margin-top:4px; }
+  .profile-joined{ font-size:12.5px; color:var(--text-faint); margin-top:6px; }
+
+  .stat-row{ display:flex; gap:32px; margin-top:22px; flex-wrap:wrap; }
+  .stat{ text-align:left; }
+  .stat b{ font-family:var(--font-display); font-size:24px; font-weight:700; display:block; }
+  .stat span{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+
+  /* ---- content grid ---- */
+  .profile-body{ display:none; padding:36px 0 60px; grid-template-columns:220px 1fr; gap:28px; }
+  .side-nav{ display:flex; flex-direction:column; gap:4px; height:fit-content; }
+  .side-nav button{
+    text-align:left; background:transparent; border:1px solid transparent; color:var(--text-dim);
+    padding:11px 14px; font-family:var(--font-mono); font-size:12.5px; letter-spacing:.03em; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px;
+  }
+  .side-nav button svg{ width:16px; height:16px; }
+  .side-nav button.active{ color:var(--amber); background:rgba(255,176,32,.06); border-color:var(--line); }
+  .side-nav button:hover{ color:var(--text); }
+  .side-nav button.danger{ color:var(--red-alert); margin-top:8px; border-top:1px solid var(--line); padding-top:14px; }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+  .panel h2{ font-family:var(--font-display); font-weight:700; font-size:20px; text-transform:uppercase; margin-bottom:18px; }
+
+  .field{ margin-bottom:16px; max-width:420px; }
+  .field label{ display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); margin-bottom:7px; }
+  input{ width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text); font-size:14px; padding:11px 12px; }
+  input:disabled{ color:var(--text-faint); }
+  input:focus{ outline:none; border-color:var(--amber); }
+
+  .btn-primary{
+    font-family:var(--font-mono); font-size:12.5px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--amber); color:#151505; padding:11px 20px; border:none;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .btn-primary:disabled{ opacity:.5; }
+
+  .empty-state{ padding:40px 20px; text-align:center; color:var(--text-dim); font-size:13.5px; }
+  .empty-state svg{ width:36px; height:36px; color:var(--text-faint); margin-bottom:12px; }
+
+  .list-item{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); font-size:13.5px; }
+  .list-item:last-child{ border-bottom:none; }
+  .list-item .meta{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:3px; }
+
+  .alert{ font-size:12.5px; padding:10px 12px; margin-bottom:16px; border:1px solid; display:none; max-width:420px; }
+  .alert.show{ display:block; }
+  .alert.ok{ border-color:rgba(52,199,123,.4); background:rgba(52,199,123,.08); color:#7ee7ab; }
+  .alert.error{ border-color:rgba(255,75,62,.4); background:rgba(255,75,62,.08); color:#ff8a80; }
+
+  @media(max-width:760px){
+    .profile-body{ grid-template-columns:1fr; }
+    .side-nav{ flex-direction:row; overflow-x:auto; border-bottom:1px solid var(--line); padding-bottom:10px; }
+    .side-nav button.danger{ margin-top:0; border-top:none; padding-top:11px; }
+  }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap navbar">
+    <a href="index.html" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
+      FREE FIRE HUB
+    </a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</header>
+
+<!-- gate: shown while checking auth, or if logged out -->
+<div id="authGate">
+  <div class="spinner-lg" id="gateSpinner"></div>
+  <p id="gateText">Checking your session…</p>
+</div>
+
+<!-- profile hero -->
+<section class="profile-hero" id="profileHero">
+  <div class="wrap profile-top">
+    <div class="avatar" id="avatar">?</div>
+    <div>
+      <div class="profile-name" id="profileName">—</div>
+      <div class="profile-email" id="profileEmail">—</div>
+      <div class="profile-joined" id="profileJoined"></div>
+    </div>
+  </div>
+  <div class="wrap stat-row">
+    <div class="stat"><b id="statPosts">0</b><span>Posts</span></div>
+    <div class="stat"><b id="statSaved">0</b><span>Saved</span></div>
+    <div class="stat"><b id="statCodes">0</b><span>Codes Claimed</span></div>
+  </div>
+</section>
+
+<!-- profile body -->
+<div class="wrap profile-body" id="profileBody">
+  <nav class="side-nav">
+    <button data-panel="overview" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+    <button data-panel="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.03 1.56V21a2 2 0 01-4 0v-.09A1.7 1.7 0 008 19.4a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1.03H3a2 2 0 010-4h.09A1.7 1.7 0 004.6 8.6a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 008.6 4.6a1.7 1.7 0 001.03-1.56V3a2 2 0 014 0v.09A1.7 1.7 0 0015.4 4.6a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 8.6a1.7 1.7 0 001.56 1.03H21a2 2 0 010 4h-.09a1.7 1.7 0 00-1.51 1.37Z"/></svg>
+      Settings
+    </button>
+    <button data-panel="saved">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16Z"/></svg>
+      Saved Articles
+    </button>
+    <button data-panel="codes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v10M18 7v10"/></svg>
+      Claimed Codes
+    </button>
+    <button class="danger" id="logoutBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Logout
+    </button>
+  </nav>
+
+  <div>
+    <div class="panel active" id="panel-overview">
+      <h2>Account Overview</h2>
+      <p style="color:var(--text-dim); font-size:13.5px; max-width:460px;">
+        உங்க account details, activity summary இங்க இருக்கும். Posts, saved articles மற்றும் claimed redeem codes-ஐ side menu-ல பாருங்க.
+      </p>
+    </div>
+
+    <div class="panel" id="panel-settings">
+      <h2>Account Settings</h2>
+      <div class="alert ok" id="settingsOk">Profile updated successfully.</div>
+      <div class="alert error" id="settingsErr"></div>
+      <form id="settingsForm">
+        <div class="field">
+          <label for="nameInput">In-game Name</label>
+          <input type="text" id="nameInput">
+        </div>
+        <div class="field">
+          <label for="emailInputRO">Email</label>
+          <input type="email" id="emailInputRO" disabled>
+        </div>
+        <button type="submit" class="btn-primary" id="saveBtn">Save Changes</button>
+      </form>
+    </div>
+
+    <div class="panel" id="panel-saved">
+      <h2>Saved Articles</h2>
+      <div class="bracket" id="savedList">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16Z"/></svg>
+          <div>எதுவும் save பண்ணல. News page-ல bookmark icon click பண்ணி save பண்ணுங்க.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-codes">
+      <h2>Claimed Redeem Codes</h2>
+      <div class="bracket" id="codesList">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v10M18 7v10"/></svg>
+          <div>இன்னும் எந்த code-மும் claim பண்ணல.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
+    authDomain: "freefire-6e80e.firebaseapp.com",
+    projectId: "freefire-6e80e",
+    storageBucket: "freefire-6e80e.firebasestorage.app",
+    messagingSenderId: "249508261364",
+    appId: "1:249508261364:web:b846118ee5952e3b099da1",
+    measurementId: "G-W85RYGBJE0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const authGate = document.getElementById("authGate");
+  const gateText = document.getElementById("gateText");
+  const gateSpinner = document.getElementById("gateSpinner");
+  const profileHero = document.getElementById("profileHero");
+  const profileBody = document.getElementById("profileBody");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      gateSpinner.style.display = "none";
+      gateText.innerHTML = `இந்த page பார்க்க login பண்ண வேண்டும்.<br><br>`;
+      const loginLink = document.createElement("a");
+      loginLink.href = "login.html?redirect=profile.html";
+      loginLink.className = "btn-primary";
+      loginLink.style.display = "inline-block";
+      loginLink.style.marginTop = "12px";
+      loginLink.textContent = "Login to continue";
+      authGate.appendChild(loginLink);
+      return;
+    }
+    authGate.style.display = "none";
+    profileHero.style.display = "block";
+    profileBody.style.display = "grid";
+    await renderProfile(user);
+  });
+
+  async function renderProfile(user){
+    document.getElementById("profileName").textContent = user.displayName || "Player";
+    document.getElementById("profileEmail").textContent = user.email || "";
+    document.getElementById("nameInput").value = user.displayName || "";
+    document.getElementById("emailInputRO").value = user.email || "";
+
+    const avatar = document.getElementById("avatar");
+    if (user.photoURL) {
+      avatar.innerHTML = `<img src="${user.photoURL}" alt="">`;
+    } else {
+      avatar.textContent = (user.displayName || user.email || "?").trim()[0].toUpperCase();
+    }
+
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        const d = snap.data();
+        if (d.createdAt?.toDate) {
+          document.getElementById("profileJoined").textContent =
+            "Joined " + d.createdAt.toDate().toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" });
+        }
+      }
+    } catch (e) { console.warn("profile doc load failed:", e.message); }
+
+    loadSaved(user.uid);
+    loadCodes(user.uid);
+  }
+
+  async function loadSaved(uid){
+    try {
+      const q = query(collection(db, "savedArticles"), where("uid", "==", uid), orderBy("savedAt", "desc"));
+      const snap = await getDocs(q);
+      document.getElementById("statSaved").textContent = snap.size;
+      if (!snap.empty) {
+        document.getElementById("savedList").innerHTML = snap.docs.map(d => {
+          const v = d.data();
+          return `<div class="list-item"><div><div>${escapeHtml(v.title||"Untitled")}</div><div class="meta">saved</div></div><a href="news-detail.html?id=${v.articleId||''}" class="btn-ghost" style="padding:6px 12px;font-size:11px;">Open</a></div>`;
+        }).join("");
+      }
+    } catch (e) { console.warn("saved load failed (index may be required):", e.message); }
+  }
+
+  async function loadCodes(uid){
+    try {
+      const q = query(collection(db, "claimedCodes"), where("uid", "==", uid), orderBy("claimedAt", "desc"));
+      const snap = await getDocs(q);
+      document.getElementById("statCodes").textContent = snap.size;
+      if (!snap.empty) {
+        document.getElementById("codesList").innerHTML = snap.docs.map(d => {
+          const v = d.data();
+          return `<div class="list-item"><div><div>${escapeHtml(v.code||"")}</div><div class="meta">claimed</div></div></div>`;
+        }).join("");
+      }
+    } catch (e) { console.warn("codes load failed (index may be required):", e.message); }
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  // ---- side nav switching ----
+  document.querySelectorAll(".side-nav button[data-panel]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".side-nav button[data-panel]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("panel-" + btn.dataset.panel).classList.add("active");
+    });
+  });
+
+  // ---- settings form ----
+  document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const okBox = document.getElementById("settingsOk");
+    const errBox = document.getElementById("settingsErr");
+    okBox.classList.remove("show"); errBox.classList.remove("show");
+    const saveBtn = document.getElementById("saveBtn");
+    const newName = document.getElementById("nameInput").value.trim();
+    if (!newName) { errBox.textContent = "பெயர் காலியாக இருக்கக்கூடாது."; errBox.classList.add("show"); return; }
+    saveBtn.disabled = true;
+    try {
+      const user = auth.currentUser;
+      await updateProfile(user, { displayName: newName });
+      await updateDoc(doc(db, "users", user.uid), { displayName: newName });
+      document.getElementById("profileName").textContent = newName;
+      okBox.classList.add("show");
+    } catch (err) {
+      errBox.textContent = err.message;
+      errBox.classList.add("show");
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  // ---- logout ----
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+</script>
+</body>
+</html>
