@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0f11">
 <title>Admin Panel — Free Fire Fan Hub</title>
 
 <style>
   :root{
     --bg:#0d0f11; --bg-raised:#15181b; --bg-card:#1a1e22; --line:#2a2f34;
-    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b;
+    --amber:#ffb020; --red-alert:#ff4b3e; --green-ok:#34c77b; --blue:#4a9eff;
     --text:#eef1f3; --text-dim:#8b939a; --text-faint:#565d63;
     --font-display:'Rajdhani','Oswald','Arial Narrow',sans-serif;
     --font-body:'Inter','Segoe UI',sans-serif;
@@ -20,7 +22,6 @@
   a{ color:inherit; text-decoration:none; }
   button, select{ font-family:inherit; cursor:pointer; }
 
-  /* ---- gate ---- */
   #authGate{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:40px 20px; }
   #authGate p{ color:var(--text-dim); font-size:14px; max-width:340px; }
   .spinner-lg{ width:32px; height:32px; border:3px solid var(--line); border-top-color:var(--amber); border-radius:50%; animation:spin .7s linear infinite; }
@@ -31,98 +32,136 @@
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
   }
 
-  /* ---- layout ---- */
   #adminApp{ display:none; grid-template-columns:230px 1fr; min-height:100vh; }
-  .sidebar{ background:var(--bg-raised); border-right:1px solid var(--line); padding:20px 0; display:flex; flex-direction:column; }
-  .brand{ font-family:var(--font-display); font-weight:700; font-size:18px; display:flex; align-items:center; gap:8px; padding:0 20px 20px; border-bottom:1px solid var(--line); margin-bottom:12px; }
+  .sidebar{ background:var(--bg-raised); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; overflow-y:auto; }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:18px; display:flex; align-items:center; gap:8px; padding:0 20px 16px; border-bottom:1px solid var(--line); margin-bottom:8px; }
   .brand svg{ color:var(--amber); }
+  .nav-group-label{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); padding:14px 20px 6px; }
   .nav-item{
-    display:flex; align-items:center; gap:12px; padding:11px 20px; color:var(--text-dim);
-    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.03em; text-transform:uppercase;
+    display:flex; align-items:center; gap:12px; padding:9px 20px; color:var(--text-dim);
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.02em; text-transform:uppercase;
     border-left:3px solid transparent; background:none; border-top:none; border-right:none; border-bottom:none; width:100%; text-align:left;
   }
-  .nav-item svg{ width:17px; height:17px; flex-shrink:0; }
+  .nav-item svg{ width:16px; height:16px; flex-shrink:0; }
   .nav-item.active{ color:var(--amber); border-left-color:var(--amber); background:rgba(255,176,32,.06); }
   .nav-item:hover{ color:var(--text); }
-  .nav-item.logout{ margin-top:auto; color:var(--red-alert); }
+  .nav-item.exit{ margin-top:10px; color:var(--red-alert); border-top:1px solid var(--line); padding-top:14px; }
 
-  .main{ padding:28px 32px 60px; overflow-x:auto; }
-  .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
-  .topbar h1{ font-family:var(--font-display); font-weight:700; font-size:26px; text-transform:uppercase; }
-  .who{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+  .main{ padding:26px 30px 60px; overflow-x:auto; }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .topbar h1{ font-family:var(--font-display); font-weight:700; font-size:24px; text-transform:uppercase; }
+  .who{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim); }
   .who strong{ color:var(--amber); }
 
-  .view{ display:none; }
-  .view.active{ display:block; }
+  .view{ display:none; } .view.active{ display:block; }
 
-  /* dashboard stats */
-  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
-  .stat-card{ border:1px solid var(--line); background:var(--bg-card); padding:18px 20px; position:relative; }
-  .stat-card::before{ content:""; position:absolute; top:-1px; left:-1px; width:14px; height:14px; border:2px solid var(--amber); border-right:none; border-bottom:none; }
-  .stat-card b{ font-family:var(--font-display); font-size:30px; font-weight:700; display:block; }
-  .stat-card span{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+  .stat-card{ border:1px solid var(--line); background:var(--bg-card); padding:16px 18px; position:relative; }
+  .stat-card::before{ content:""; position:absolute; top:-1px; left:-1px; width:12px; height:12px; border:2px solid var(--amber); border-right:none; border-bottom:none; }
+  .stat-card b{ font-family:var(--font-display); font-size:26px; font-weight:700; display:block; }
+  .stat-card span{ font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); }
 
   .bracket{ position:relative; border:1px solid var(--line); background:var(--bg-card); }
   .bracket::before,.bracket::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--amber); opacity:.85; }
   .bracket::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
   .bracket::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
 
-  .panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
-  .panel-head h2{ font-family:var(--font-display); font-weight:700; font-size:20px; text-transform:uppercase; }
+  .panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .panel-head h2{ font-family:var(--font-display); font-weight:700; font-size:19px; text-transform:uppercase; }
+  .subtabs{ display:flex; gap:2px; margin-bottom:16px; }
+  .subtabs button{ background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:8px 14px; font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; }
+  .subtabs button.active{ color:var(--amber); background:var(--bg-card); border-color:var(--amber); }
 
-  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
-  th{ text-align:left; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); padding:12px 16px; border-bottom:1px solid var(--line); }
-  td{ padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-faint); padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td{ padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:middle; }
   tr:last-child td{ border-bottom:none; }
-  .row-actions{ display:flex; gap:8px; }
-  .icon-btn{ width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid var(--line); color:var(--text-dim); }
-  .icon-btn svg{ width:15px; height:15px; }
+  .row-actions{ display:flex; gap:6px; }
+  .icon-btn{ width:30px; height:30px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid var(--line); color:var(--text-dim); flex-shrink:0; }
+  .icon-btn svg{ width:14px; height:14px; }
   .icon-btn:hover{ border-color:var(--amber); color:var(--amber); }
   .icon-btn.del:hover{ border-color:var(--red-alert); color:var(--red-alert); }
 
-  .pill{ font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; }
-  .pill.active{ background:rgba(52,199,123,.12); color:var(--green-ok); border:1px solid rgba(52,199,123,.3); }
-  .pill.expired, .pill.completed{ background:rgba(255,75,62,.08); color:#ff8a80; border:1px solid rgba(255,75,62,.25); }
-  .pill.current, .pill.upcoming{ background:rgba(255,176,32,.1); color:var(--amber); border:1px solid rgba(255,176,32,.3); }
+  .pill{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; white-space:nowrap; }
+  .pill.on, .pill.admin, .pill.active{ background:rgba(52,199,123,.12); color:var(--green-ok); border:1px solid rgba(52,199,123,.3); }
+  .pill.off, .pill.banned, .pill.expired{ background:rgba(255,75,62,.08); color:#ff8a80; border:1px solid rgba(255,75,62,.25); }
+  .pill.user{ background:rgba(74,158,255,.1); color:var(--blue); border:1px solid rgba(74,158,255,.3); }
 
   .btn-add{
-    font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
-    background:var(--amber); color:#151505; padding:10px 16px; border:none;
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
+    background:var(--amber); color:#151505; padding:9px 15px; border:none;
     clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
   }
+  .btn-sm{ font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:8px 12px; }
+  .btn-sm:hover{ border-color:var(--amber); color:var(--amber); }
 
-  /* modal form */
+  .search-box{ position:relative; max-width:280px; }
+  .search-box svg{ position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-faint); }
+  .search-box input{ width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px 9px 32px; font-size:12.5px; }
+  .search-box input:focus{ outline:none; border-color:var(--amber); }
+
   .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; align-items:center; justify-content:center; padding:20px; }
   .modal-overlay.show{ display:flex; }
-  .modal{ background:var(--bg-card); border:1px solid var(--line); max-width:520px; width:100%; padding:26px; position:relative; max-height:88vh; overflow-y:auto; }
+  .modal{ background:var(--bg-card); border:1px solid var(--line); max-width:540px; width:100%; padding:26px; position:relative; max-height:88vh; overflow-y:auto; }
   .modal::before{ content:""; position:absolute; top:-1px; left:-1px; width:16px; height:16px; border:2px solid var(--amber); border-right:none; border-bottom:none; }
-  .modal h2{ font-family:var(--font-display); font-weight:700; font-size:20px; text-transform:uppercase; margin-bottom:20px; }
-  .field{ margin-bottom:14px; }
-  .field label{ display:block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
-  input, textarea, select{ width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:10px 12px; font-family:var(--font-body); }
-  textarea{ resize:vertical; min-height:80px; }
+  .modal h2{ font-family:var(--font-display); font-weight:700; font-size:19px; text-transform:uppercase; margin-bottom:18px; }
+  .field{ margin-bottom:13px; }
+  .field label{ display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
+  input, textarea, select{ width:100%; background:var(--bg-raised); border:1px solid var(--line); color:var(--text); font-size:13px; padding:9px 11px; font-family:var(--font-body); }
+  textarea{ resize:vertical; min-height:70px; }
   input:focus, textarea:focus, select:focus{ outline:none; border-color:var(--amber); }
-  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
-  .btn-cancel{ background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:10px 16px; font-family:var(--font-mono); font-size:12px; text-transform:uppercase; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+  .btn-cancel{ background:transparent; border:1px solid var(--line); color:var(--text-dim); padding:9px 15px; font-family:var(--font-mono); font-size:11px; text-transform:uppercase; }
 
-  .empty-state{ padding:50px 20px; text-align:center; color:var(--text-dim); font-size:13.5px; }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line); }
+  .toggle-row:last-child{ border-bottom:none; }
+  .toggle-row .name{ font-size:13.5px; }
+  .switch{ position:relative; width:42px; height:22px; background:var(--bg-raised); border:1px solid var(--line); cursor:pointer; flex-shrink:0; }
+  .switch.on{ background:rgba(255,176,32,.25); border-color:var(--amber); }
+  .switch .knob{ position:absolute; top:1px; left:1px; width:16px; height:16px; background:var(--text-faint); transition:transform .15s ease, background .15s ease; }
+  .switch.on .knob{ transform:translateX(20px); background:var(--amber); }
+
+  .media-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin-top:16px; }
+  .media-item{ position:relative; aspect-ratio:1; border:1px solid var(--line); background:var(--bg-raised); overflow:hidden; }
+  .media-item img, .media-item video{ width:100%; height:100%; object-fit:cover; }
+  .media-item .overlay-actions{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; gap:8px; opacity:0; transition:opacity .15s ease; }
+  .media-item:hover .overlay-actions{ opacity:1; }
+  .upload-zone{ border:2px dashed var(--line); padding:30px; text-align:center; color:var(--text-dim); font-size:13px; cursor:pointer; display:block; }
+  .upload-zone:hover{ border-color:var(--amber); color:var(--amber); }
+  .upload-zone input{ display:none; }
+  .progress-bar{ height:4px; background:var(--bg-raised); margin-top:10px; overflow:hidden; display:none; }
+  .progress-bar.show{ display:block; }
+  .progress-fill{ height:100%; background:var(--amber); width:0%; transition:width .2s ease; }
+
+  .settings-form{ max-width:560px; }
+  .section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); margin:22px 0 12px; }
+  .section-title:first-child{ margin-top:0; }
+
+  .security-item{ display:flex; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .security-item:last-child{ border-bottom:none; }
+  .security-item svg{ width:18px; height:18px; color:var(--green-ok); flex-shrink:0; margin-top:2px; }
+  .security-item .t{ font-size:13.5px; font-weight:500; }
+  .security-item .d{ font-size:12px; color:var(--text-dim); margin-top:3px; }
+
+  .empty-state{ padding:40px 20px; text-align:center; color:var(--text-dim); font-size:13px; }
   .toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
     background:var(--bg-card); border:1px solid var(--amber); color:var(--text);
-    padding:12px 20px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:300;
+    padding:12px 20px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:300; max-width:90vw;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
   @media(max-width:900px){
     #adminApp{ grid-template-columns:1fr; }
-    .sidebar{ flex-direction:row; overflow-x:auto; padding:12px; }
-    .brand{ display:none; }
-    .nav-item{ white-space:nowrap; border-left:none; border-bottom:3px solid transparent; padding:10px 14px; }
+    .sidebar{ flex-direction:row; overflow-x:auto; padding:10px; white-space:nowrap; }
+    .brand, .nav-group-label{ display:none; }
+    .nav-item{ border-left:none; border-bottom:3px solid transparent; padding:9px 12px; }
     .nav-item.active{ border-bottom-color:var(--amber); }
-    .nav-item.logout{ margin-top:0; }
+    .nav-item.exit{ margin-top:0; border-top:none; padding-top:9px; }
     .stat-grid{ grid-template-columns:repeat(2,1fr); }
-    .main{ padding:20px; }
-    table{ font-size:12.5px; }
+    .main{ padding:18px; }
+    .field-row{ grid-template-columns:1fr; }
   }
   :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
 </style>
@@ -140,27 +179,34 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C12 2 7 7.5 7 12.5C7 15 8.2 16.7 9.5 17.5C9 16.5 9 15 9.5 14C10 15.5 11 16 11 16C10.5 14 11 12 12.5 10.5C12 12.5 12.5 14 13.5 14.5C13 12 14 9.5 16 8C15 10 15.5 12 16.5 13C17 13.7 17.5 14.7 17.5 16C17.5 19 15 21.5 12 21.5C9 21.5 6.5 19.3 6.5 16.3C6.5 11 12 2 12 2Z" fill="currentColor"/></svg>
       ADMIN
     </div>
+
     <button class="nav-item active" data-view="dashboard">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Dashboard
     </button>
-    <button class="nav-item" data-view="news">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h14a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v3"/><path d="M14 2v5h5"/><path d="M4 12h4M4 16h8M4 20h6"/></svg>
-      News
-    </button>
-    <button class="nav-item" data-view="events">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      Events
-    </button>
-    <button class="nav-item" data-view="codes">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v10M18 7v10"/></svg>
-      Redeem Codes
-    </button>
-    <button class="nav-item" data-view="users">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Users
-    </button>
-    <a href="index.html" class="nav-item logout">
+
+    <div class="nav-group-label">Content</div>
+    <button class="nav-item" data-view="news">News</button>
+    <button class="nav-item" data-view="events">Events</button>
+    <button class="nav-item" data-view="codes">Redeem Codes</button>
+    <button class="nav-item" data-view="weapons">Weapons</button>
+    <button class="nav-item" data-view="characters">Characters</button>
+    <button class="nav-item" data-view="bundles">Bundles</button>
+    <button class="nav-item" data-view="videos">Videos</button>
+
+    <div class="nav-group-label">Manage</div>
+    <button class="nav-item" data-view="media">Media Manager</button>
+    <button class="nav-item" data-view="homepage">Homepage</button>
+    <button class="nav-item" data-view="community">Community</button>
+    <button class="nav-item" data-view="notifications">Notifications</button>
+    <button class="nav-item" data-view="users">Users</button>
+
+    <div class="nav-group-label">System</div>
+    <button class="nav-item" data-view="settings">Website Settings</button>
+    <button class="nav-item" data-view="ads">Advertisements</button>
+    <button class="nav-item" data-view="security">Security</button>
+
+    <a href="index.html" class="nav-item exit">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
       Exit Admin
     </a>
@@ -172,77 +218,193 @@
       <div class="who">Logged in as <strong id="whoName">—</strong></div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
       <div class="stat-grid">
-        <div class="stat-card"><b id="dNews">—</b><span>News Articles</span></div>
-        <div class="stat-card"><b id="dEvents">—</b><span>Events</span></div>
+        <div class="stat-card"><b id="dUsers">—</b><span>Total Users</span></div>
+        <div class="stat-card"><b id="dPosts">—</b><span>Total Posts</span></div>
+        <div class="stat-card"><b id="dVideos">—</b><span>Total Videos</span></div>
+        <div class="stat-card"><b id="dNews">—</b><span>Total News</span></div>
+        <div class="stat-card"><b id="dEvents">—</b><span>Total Events</span></div>
         <div class="stat-card"><b id="dCodes">—</b><span>Redeem Codes</span></div>
-        <div class="stat-card"><b id="dUsers">—</b><span>Registered Users</span></div>
+        <div class="stat-card"><b id="dImages">—</b><span>Total Images</span></div>
+        <div class="stat-card"><b id="dWeapons">—</b><span>Weapons / Characters / Bundles</span></div>
       </div>
-      <div class="bracket" style="padding:22px;">
-        <p style="color:var(--text-dim); font-size:13.5px; line-height:1.7;">
-          இடது side menu-ல News, Events, Redeem Codes-ஐ Add / Edit / Delete பண்ணலாம். இங்க பண்ற மாற்றங்கள் உடனே website-ல தெரியும் (Firestore real-time collections).
+      <div class="bracket" style="padding:20px;">
+        <div class="panel-head" style="margin-bottom:12px;"><h2 style="font-size:16px;">Website Statistics</h2></div>
+        <p style="color:var(--text-dim); font-size:13px; line-height:1.7;">
+          இடது side menu-ல் ஒவ்வொரு content type-ஐயும் Add/Edit/Delete பண்ணலாம். Media Manager-ல் images/videos Firebase Storage-க்கு upload பண்ணி, அந்த URL-ஐ News/Events/Weapons forms-ல் paste பண்ணலாம்.
         </p>
       </div>
     </div>
 
-    <!-- NEWS -->
-    <div class="view" id="view-news">
-      <div class="panel-head">
-        <h2>Manage News</h2>
-        <button class="btn-add" data-add="news">+ Add News</button>
-      </div>
-      <div class="bracket" style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>Title</th><th>Category</th><th>Date</th><th style="width:100px;">Actions</th></tr></thead>
-          <tbody id="newsTable"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
-        </table>
+    <div class="view" id="view-news"></div>
+    <div class="view" id="view-events"></div>
+    <div class="view" id="view-codes"></div>
+    <div class="view" id="view-weapons"></div>
+    <div class="view" id="view-characters"></div>
+    <div class="view" id="view-bundles"></div>
+    <div class="view" id="view-videos"></div>
+
+    <div class="view" id="view-media">
+      <div class="panel-head"><h2>Media Manager</h2></div>
+      <label class="upload-zone bracket" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+        Click to upload images or videos to Firebase Storage
+        <div class="progress-bar" id="uploadProgress"><div class="progress-fill" id="uploadProgressFill"></div></div>
+      </label>
+      <div class="media-grid" id="mediaGrid"></div>
+    </div>
+
+    <div class="view" id="view-homepage">
+      <div class="panel-head"><h2>Homepage Manager</h2></div>
+      <div class="bracket" style="padding:22px; max-width:560px;">
+        <div class="section-title">Hero Banner</div>
+        <div class="field"><label>Hero Title</label><input type="text" id="hpHeroTitle" placeholder="Booyah Day 2024"></div>
+        <div class="field"><label>Hero Subtitle / Tag</label><input type="text" id="hpHeroTag" placeholder="NEW EVENT LIVE"></div>
+        <div class="field"><label>Hero Image URL</label><input type="text" id="hpHeroImage" placeholder="https://…"></div>
+        <div class="field"><label>Event End Date (for countdown)</label><input type="date" id="hpEventEnd"></div>
+
+        <div class="section-title">Enable / Disable Homepage Sections</div>
+        <div id="sectionToggles"></div>
+
+        <button class="btn-add" id="saveHomepageBtn" style="margin-top:18px;">Save Homepage Settings</button>
       </div>
     </div>
 
-    <!-- EVENTS -->
-    <div class="view" id="view-events">
-      <div class="panel-head">
-        <h2>Manage Events</h2>
-        <button class="btn-add" data-add="events">+ Add Event</button>
+    <div class="view" id="view-community">
+      <div class="panel-head"><h2>Community Management</h2></div>
+      <div class="subtabs" id="communitySubtabs">
+        <button data-sub="posts" class="active">Posts</button>
+        <button data-sub="comments">Comments</button>
+        <button data-sub="banned">Banned Users</button>
       </div>
-      <div class="bracket" style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>Title</th><th>Status</th><th>Dates</th><th style="width:100px;">Actions</th></tr></thead>
-          <tbody id="eventsTable"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
-        </table>
+      <div class="bracket" style="overflow-x:auto;" id="communityPanelContent"></div>
+    </div>
+
+    <div class="view" id="view-notifications">
+      <div class="panel-head"><h2>Send Notifications</h2></div>
+      <div class="bracket" style="padding:22px; max-width:520px;">
+        <div class="field">
+          <label>Type</label>
+          <select id="notifType">
+            <option value="push">Push Notification</option>
+            <option value="system">Announcement</option>
+            <option value="maintenance">Maintenance Message</option>
+          </select>
+        </div>
+        <div class="field"><label>Title</label><input type="text" id="notifTitle" placeholder="Server maintenance tonight"></div>
+        <div class="field"><label>Message</label><textarea id="notifDesc" placeholder="Details for the user…"></textarea></div>
+        <button class="btn-add" id="sendNotifBtn">Send to All Users</button>
+        <p style="font-size:11.5px; color:var(--text-faint); margin-top:12px; line-height:1.6;">
+          இது எல்லா registered users-ஓட notifications collection-லேயும் ஒரு entry உருவாக்கும். User notifications.html page-ல் இதை பார்ப்பாங்க. Real device push அனுப்ப Firebase Cloud Messaging + Cloud Function தேவை (server-side setup).
+        </p>
       </div>
     </div>
 
-    <!-- CODES -->
-    <div class="view" id="view-codes">
-      <div class="panel-head">
-        <h2>Manage Redeem Codes</h2>
-        <button class="btn-add" data-add="codes">+ Add Code</button>
-      </div>
-      <div class="bracket" style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>Code</th><th>Status</th><th>Note</th><th style="width:100px;">Actions</th></tr></thead>
-          <tbody id="codesTable"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- USERS -->
     <div class="view" id="view-users">
-      <div class="panel-head"><h2>Registered Users</h2></div>
+      <div class="panel-head">
+        <h2>Users</h2>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="userSearch" placeholder="Search name or email…">
+        </div>
+      </div>
       <div class="bracket" style="overflow-x:auto;">
         <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
-          <tbody id="usersTable"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th style="width:140px;">Actions</th></tr></thead>
+          <tbody id="usersTable"><tr><td colspan="6" class="empty-state">Loading…</td></tr></tbody>
         </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-settings">
+      <div class="panel-head"><h2>Website Settings</h2></div>
+      <div class="bracket settings-form" style="padding:22px;">
+        <div class="section-title">General</div>
+        <div class="field"><label>Website Name</label><input type="text" id="setSiteName" placeholder="Free Fire Fan Hub"></div>
+        <div class="field-row">
+          <div class="field"><label>Logo URL</label><input type="text" id="setLogo" placeholder="https://…/logo.png"></div>
+          <div class="field"><label>Favicon URL</label><input type="text" id="setFavicon" placeholder="https://…/favicon.ico"></div>
+        </div>
+        <div class="field"><label>Footer Text</label><textarea id="setFooter" placeholder="© 2024 Free Fire Fan Hub…"></textarea></div>
+
+        <div class="section-title">Contact Details</div>
+        <div class="field-row">
+          <div class="field"><label>Contact Email</label><input type="text" id="setEmail" placeholder="support@…"></div>
+          <div class="field"><label>Contact Phone</label><input type="text" id="setPhone" placeholder="+91…"></div>
+        </div>
+
+        <div class="section-title">Social Media Links</div>
+        <div class="field-row">
+          <div class="field"><label>Instagram</label><input type="text" id="setInsta"></div>
+          <div class="field"><label>YouTube</label><input type="text" id="setYoutube"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Discord</label><input type="text" id="setDiscord"></div>
+          <div class="field"><label>Twitter / X</label><input type="text" id="setTwitter"></div>
+        </div>
+
+        <div class="section-title">SEO</div>
+        <div class="field"><label>SEO Meta Title</label><input type="text" id="setSeoTitle" placeholder="Free Fire India — News, Events & Redeem Codes"></div>
+        <div class="field"><label>SEO Meta Description</label><textarea id="setSeoDesc" placeholder="150-160 characters…"></textarea></div>
+
+        <button class="btn-add" id="saveSettingsBtn" style="margin-top:8px;">Save Settings</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-ads">
+      <div class="panel-head"><h2>Advertisements</h2></div>
+      <div class="bracket settings-form" style="padding:22px;">
+        <div class="toggle-row">
+          <div><div class="name">Enable Ads</div><div style="font-size:11.5px;color:var(--text-faint);">Master switch for all ad units</div></div>
+          <div class="switch" id="adsEnabledToggle"><div class="knob"></div></div>
+        </div>
+        <div class="section-title">Google AdSense</div>
+        <div class="field"><label>AdSense Client ID</label><input type="text" id="adsClientId" placeholder="ca-pub-xxxxxxxxxxxxxxxx"></div>
+        <div class="field"><label>Ad Slot IDs (one per line)</label><textarea id="adsSlots" placeholder="Header: 1234567890&#10;Sidebar: 0987654321"></textarea></div>
+        <div class="toggle-row">
+          <div><div class="name">Home Page Ads</div></div>
+          <div class="switch" id="adsHomeToggle"><div class="knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="name">News Article Ads</div></div>
+          <div class="switch" id="adsNewsToggle"><div class="knob"></div></div>
+        </div>
+        <button class="btn-add" id="saveAdsBtn" style="margin-top:16px;">Save Ad Settings</button>
+        <p style="font-size:11.5px; color:var(--text-faint); margin-top:14px; line-height:1.6;">
+          "AdSense Ready" — இந்த settings save ஆனா, ஒவ்வொரு page-லும் AdSense script tag-ஐ manual-ஆ சேர்த்து இந்த client ID-ஐ பயன்படுத்தணும் (Google AdSense approval தேவை).
+        </p>
+      </div>
+    </div>
+
+    <div class="view" id="view-security">
+      <div class="panel-head"><h2>Security Overview</h2></div>
+      <div class="bracket" style="overflow:hidden;">
+        <div class="security-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+          <div><div class="t">Admin Route Protected</div><div class="d">இந்த page load ஆகும்போதே users/{uid}.role == "admin" check பண்ணுது. இல்லன்னா access தடுக்கப்படும்.</div></div>
+        </div>
+        <div class="security-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          <div><div class="t">Firestore Security Rules</div><div class="d">firestore.rules file-ல் content collections-க்கு admin-only write, users-க்கு own-data-only access define பண்ணப்பட்டிருக்கு. Firebase Console-ல் paste பண்ணுங்க.</div></div>
+        </div>
+        <div class="security-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          <div><div class="t">Storage Security Rules</div><div class="d">storage.rules file public read, admin-only write define பண்ணுது. Firebase Console → Storage → Rules-ல் paste பண்ணுங்க.</div></div>
+        </div>
+        <div class="security-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 10-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <div><div class="t">Role Verification</div><div class="d">Client-side check UI-ஐ மட்டும் மறைக்கும் — real protection Firestore rules-லேயே தான். Rules இல்லாம deploy பண்ணாதீங்க.</div></div>
+        </div>
+        <div class="security-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0Z"/></svg>
+          <div><div class="t">User account deletion limitation</div><div class="d">"Delete User" இந்த panel-ல் Firestore profile-ஐ மட்டும் delete பண்ணும். Firebase Auth account-ஐ முழுசா அழிக்க Admin SDK / Cloud Function தேவை.</div></div>
+        </div>
       </div>
     </div>
   </main>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2 id="modalTitle">Add Item</h2>
@@ -256,9 +418,12 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
-    getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc,
-    serverTimestamp, query, orderBy
+    getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+    serverTimestamp, query, orderBy, where, writeBatch
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytesResumable, getDownloadURL, listAll, deleteObject
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCGedP2oNKGRxI4VHAa2rD1uS7kvlu7278",
@@ -273,22 +438,16 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
-  function escapeHtml(str){
-    return String(str ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  }
-  function showToast(msg){
-    const t = document.getElementById("toast");
-    t.textContent = msg; t.classList.add("show");
-    clearTimeout(window.__t); window.__t = setTimeout(() => t.classList.remove("show"), 2400);
-  }
+  function escapeHtml(str){ return String(str ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove("show"),2800); }
 
-  // ---- ADMIN GATE: requires users/{uid}.role == "admin" ----
   onAuthStateChanged(auth, async (user) => {
     const gate = document.getElementById("authGate");
     if (!user) {
       document.getElementById("gateSpinner").style.display = "none";
-      gate.querySelector("p").innerHTML = "Admin panel பார்க்க login பண்ண வேண்டும்.";
+      gate.querySelector("p").textContent = "Admin panel பார்க்க login பண்ண வேண்டும்.";
       const link = document.createElement("a");
       link.href = "login.html?redirect=admin.html";
       link.className = "btn-primary";
@@ -314,70 +473,92 @@
     }
   });
 
-  // ================= Collection configs =================
   const CONFIGS = {
-    news: {
-      label: "News",
-      table: "newsTable",
-      cols: ["title","category","date"],
-      fields: [
-        { key:"title", label:"Title", type:"text", required:true },
-        { key:"category", label:"Category", type:"select", options:["update","event","esports"] },
-        { key:"excerpt", label:"Excerpt", type:"textarea" },
-        { key:"content", label:"Full Content", type:"textarea" },
-        { key:"imageUrl", label:"Image URL", type:"text" },
+    news: { label:"News Article", collection:"news", cols:["Title","Category","Date"],
+      fields:[
+        {key:"title",label:"Title",type:"text",required:true},
+        {key:"category",label:"Category",type:"select",options:["update","event","esports"]},
+        {key:"excerpt",label:"Excerpt",type:"textarea"},
+        {key:"content",label:"Full Content",type:"textarea"},
+        {key:"imageUrl",label:"Image URL",type:"text"},
       ],
-      row(d, id){
-        const date = d.publishedAt?.toDate ? d.publishedAt.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-        return `<tr data-id="${id}">
-          <td>${escapeHtml(d.title)}</td>
-          <td><span class="pill current">${escapeHtml(d.category||'update')}</span></td>
-          <td>${date}</td>
-          <td>${actionCell()}</td>
-        </tr>`;
-      },
-      onSave(data){ data.publishedAt = data.publishedAt || serverTimestamp(); return data; }
-    },
-    events: {
-      label: "Event",
-      table: "eventsTable",
-      fields: [
-        { key:"title", label:"Title", type:"text", required:true },
-        { key:"status", label:"Status", type:"select", options:["current","upcoming","completed"] },
-        { key:"startDateText", label:"Start Date (e.g. May 25)", type:"text" },
-        { key:"endDateText", label:"End Date (e.g. Jun 5, 2024)", type:"text" },
-        { key:"description", label:"Description", type:"textarea" },
-        { key:"progress", label:"Progress % (0-100)", type:"text" },
-        { key:"imageUrl", label:"Image URL", type:"text" },
+      row(d,id){ const date = d.publishedAt?.toDate ? d.publishedAt.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+        return `<tr data-id="${id}"><td>${escapeHtml(d.title)}</td><td><span class="pill on">${escapeHtml(d.category||'update')}</span></td><td>${date}</td><td>${actionCell()}</td></tr>`; },
+      onSave(d){ d.publishedAt = d.publishedAt || serverTimestamp(); return d; } },
+
+    events: { label:"Event", collection:"events", cols:["Title","Status","Dates"],
+      fields:[
+        {key:"title",label:"Title",type:"text",required:true},
+        {key:"status",label:"Status",type:"select",options:["current","upcoming","completed"]},
+        {key:"startDateText",label:"Start Date",type:"text"},
+        {key:"endDateText",label:"End Date",type:"text"},
+        {key:"description",label:"Description",type:"textarea"},
+        {key:"progress",label:"Progress % (0-100)",type:"text"},
+        {key:"imageUrl",label:"Image URL",type:"text"},
       ],
-      row(d, id){
-        return `<tr data-id="${id}">
-          <td>${escapeHtml(d.title)}</td>
-          <td><span class="pill ${escapeHtml(d.status)}">${escapeHtml(d.status)}</span></td>
-          <td>${escapeHtml(d.startDateText)} – ${escapeHtml(d.endDateText)}</td>
-          <td>${actionCell()}</td>
-        </tr>`;
-      },
-      onSave(data){ if (data.progress) data.progress = Number(data.progress); return data; }
-    },
-    codes: {
-      label: "Redeem Code",
-      table: "codesTable",
-      fields: [
-        { key:"code", label:"Code", type:"text", required:true },
-        { key:"status", label:"Status", type:"select", options:["active","expired"] },
-        { key:"note", label:"Note", type:"text" },
+      row(d,id){ return `<tr data-id="${id}"><td>${escapeHtml(d.title)}</td><td><span class="pill on">${escapeHtml(d.status)}</span></td><td>${escapeHtml(d.startDateText)} – ${escapeHtml(d.endDateText)}</td><td>${actionCell()}</td></tr>`; },
+      onSave(d){ if (d.progress) d.progress = Number(d.progress); return d; } },
+
+    codes: { label:"Redeem Code", collection:"redeemCodes", cols:["Code","Status","Note"],
+      fields:[
+        {key:"code",label:"Code",type:"text",required:true},
+        {key:"status",label:"Status",type:"select",options:["active","expired"]},
+        {key:"note",label:"Note",type:"text"},
       ],
-      row(d, id){
-        return `<tr data-id="${id}">
-          <td style="font-family:var(--font-mono);">${escapeHtml(d.code)}</td>
-          <td><span class="pill ${d.status==='active'?'active':'expired'}">${escapeHtml(d.status)}</span></td>
-          <td>${escapeHtml(d.note)}</td>
-          <td>${actionCell()}</td>
-        </tr>`;
+      row(d,id){ return `<tr data-id="${id}"><td style="font-family:var(--font-mono);">${escapeHtml(d.code)}</td><td><span class="pill ${d.status==='active'?'on':'off'}">${escapeHtml(d.status)}</span></td><td>${escapeHtml(d.note)}</td><td>${actionCell()}</td></tr>`; },
+      onSave(d){ d.createdAt = d.createdAt || serverTimestamp(); return d; } },
+
+    weapons: { label:"Weapon", collection:"weapons", cols:["Name","Type"],
+      fields:[
+        {key:"name",label:"Name",type:"text",required:true},
+        {key:"type",label:"Type",type:"select",options:["AR","SMG","Shotgun","Sniper","Pistol","Machine Gun","Marksman Rifle"]},
+        {key:"desc",label:"Description",type:"textarea"},
+        {key:"imageUrl",label:"Image URL",type:"text"},
+        {key:"damage",label:"Damage (0-100)",type:"text"},
+        {key:"range",label:"Range (0-100)",type:"text"},
+        {key:"accuracy",label:"Accuracy (0-100)",type:"text"},
+        {key:"magazine",label:"Magazine (0-100)",type:"text"},
+        {key:"reload",label:"Reload Speed (0-100)",type:"text"},
+      ],
+      row(d,id){ return `<tr data-id="${id}"><td>${escapeHtml(d.name)}</td><td><span class="pill on">${escapeHtml(d.type)}</span></td><td>${actionCell()}</td></tr>`; },
+      onSave(d){
+        const stats = {};
+        ["damage","range","accuracy","magazine","reload"].forEach(k => { if (d[k]!==undefined){ stats[k]=Number(d[k])||0; delete d[k]; } });
+        d.stats = stats; return d;
       },
-      onSave(data){ data.createdAt = data.createdAt || serverTimestamp(); return data; }
-    }
+      loadExtra(existing){ if (existing.stats) Object.entries(existing.stats).forEach(([k,v]) => existing[k]=v); return existing; } },
+
+    characters: { label:"Character", collection:"characters", cols:["Name","Role"],
+      fields:[
+        {key:"name",label:"Name",type:"text",required:true},
+        {key:"role",label:"Role",type:"select",options:["Assault","Support","Survival"]},
+        {key:"abilityName",label:"Ability Name",type:"text"},
+        {key:"abilityDesc",label:"Ability Description",type:"textarea"},
+        {key:"imageUrl",label:"Image URL",type:"text"},
+      ],
+      row(d,id){ return `<tr data-id="${id}"><td>${escapeHtml(d.name)}</td><td><span class="pill on">${escapeHtml(d.role)}</span></td><td>${actionCell()}</td></tr>`; } },
+
+    bundles: { label:"Bundle / Skin", collection:"bundles", cols:["Name","Category","Rarity"],
+      fields:[
+        {key:"name",label:"Name",type:"text",required:true},
+        {key:"category",label:"Category",type:"select",options:["bundle","gun-skin","emote","vehicle","backpack"]},
+        {key:"rarity",label:"Rarity",type:"select",options:["rare","epic","legendary"]},
+        {key:"imageUrl",label:"Image URL",type:"text"},
+      ],
+      row(d,id){ return `<tr data-id="${id}"><td>${escapeHtml(d.name)}</td><td>${escapeHtml(d.category)}</td><td><span class="pill on">${escapeHtml(d.rarity)}</span></td><td>${actionCell()}</td></tr>`; } },
+
+    videos: { label:"Video", collection:"videos", cols:["Title","Category","Views"],
+      fields:[
+        {key:"title",label:"Title",type:"text",required:true},
+        {key:"category",label:"Category",type:"select",options:["gameplay","tips","highlights"]},
+        {key:"youtubeId",label:"YouTube Video ID",type:"text"},
+        {key:"thumbnailUrl",label:"Thumbnail URL",type:"text"},
+        {key:"duration",label:"Duration (e.g. 8:39)",type:"text"},
+        {key:"views",label:"Views (e.g. 25K)",type:"text"},
+        {key:"age",label:"Age (e.g. 2 days ago)",type:"text"},
+      ],
+      row(d,id){ return `<tr data-id="${id}"><td>${escapeHtml(d.title)}</td><td>${escapeHtml(d.category)}</td><td>${escapeHtml(d.views||'0')}</td><td>${actionCell()}</td></tr>`; },
+      onSave(d){ d.createdAt = d.createdAt || serverTimestamp(); return d; } },
   };
 
   function actionCell(){
@@ -387,54 +568,48 @@
     </div>`;
   }
 
-  let cache = { news:{}, events:{}, codes:{} };
+  let cache = {};
+  Object.keys(CONFIGS).forEach(k => cache[k] = {});
+
+  function buildContentView(key){
+    const cfg = CONFIGS[key];
+    const view = document.getElementById("view-" + key);
+    view.innerHTML = `
+      <div class="panel-head"><h2>Manage ${escapeHtml(cfg.label)}s</h2><button class="btn-add" data-add="${key}">+ Add ${escapeHtml(cfg.label)}</button></div>
+      <div class="bracket" style="overflow-x:auto;">
+        <table><thead><tr>${cfg.cols.map(c=>`<th>${c}</th>`).join("")}<th style="width:90px;">Actions</th></tr></thead>
+        <tbody id="table-${key}"><tr><td colspan="${cfg.cols.length+1}" class="empty-state">Loading…</td></tr></tbody></table>
+      </div>`;
+    view.querySelector(`[data-add="${key}"]`).addEventListener("click", () => openModal(key, null));
+  }
 
   async function loadCollection(key){
     const cfg = CONFIGS[key];
-    const tbody = document.getElementById(cfg.table);
+    const tbody = document.getElementById("table-" + key);
     try {
-      const orderField = key === "news" ? "publishedAt" : key === "codes" ? "createdAt" : "startDateText";
       let snap;
-      try {
-        snap = await getDocs(query(collection(db, collectionName(key)), orderBy(orderField, "desc")));
-      } catch {
-        snap = await getDocs(collection(db, collectionName(key))); // fallback if field/index missing
-      }
+      try { snap = await getDocs(query(collection(db, cfg.collection), orderBy("createdAt","desc"))); }
+      catch { snap = await getDocs(collection(db, cfg.collection)); }
       cache[key] = {};
-      if (snap.empty) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">எதுவும் இல்ல. "+ Add" click பண்ணி புதுசா add பண்ணுங்க.</td></tr>`;
-        return;
-      }
+      if (snap.empty) { tbody.innerHTML = `<tr><td colspan="${cfg.cols.length+1}" class="empty-state">எதுவும் இல்ல. "+ Add" click பண்ணுங்க.</td></tr>`; return; }
       let rows = "";
       snap.forEach(d => { cache[key][d.id] = d.data(); rows += cfg.row(d.data(), d.id); });
       tbody.innerHTML = rows;
       attachRowActions(key);
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Load failed: ${escapeHtml(e.message)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${cfg.cols.length+1}" class="empty-state">Load failed: ${escapeHtml(e.message)}</td></tr>`;
     }
   }
 
-  function collectionName(key){
-    return key === "news" ? "news" : key === "events" ? "events" : "redeemCodes";
-  }
-
   function attachRowActions(key){
-    const tbody = document.getElementById(CONFIGS[key].table);
-    tbody.querySelectorAll('[data-action="edit"]').forEach(btn => {
-      btn.addEventListener("click", () => openModal(key, btn.closest("tr").dataset.id));
-    });
-    tbody.querySelectorAll('[data-action="delete"]').forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.closest("tr").dataset.id;
-        if (!confirm("இதை நிச்சயமா delete பண்ணனுமா?")) return;
-        try {
-          await deleteDoc(doc(db, collectionName(key), id));
-          showToast("Deleted.");
-          loadCollection(key);
-          loadDashboardStats();
-        } catch (e) { showToast("Error: " + e.message); }
-      });
-    });
+    const tbody = document.getElementById("table-" + key);
+    tbody.querySelectorAll('[data-action="edit"]').forEach(btn => btn.addEventListener("click", () => openModal(key, btn.closest("tr").dataset.id)));
+    tbody.querySelectorAll('[data-action="delete"]').forEach(btn => btn.addEventListener("click", async () => {
+      const id = btn.closest("tr").dataset.id;
+      if (!confirm("இதை நிச்சயமா delete பண்ணனுமா?")) return;
+      try { await deleteDoc(doc(db, CONFIGS[key].collection, id)); showToast("Deleted."); loadCollection(key); loadDashboardStats(); }
+      catch (e) { showToast("Error: " + e.message); }
+    }));
   }
 
   function openModal(key, editId){
@@ -443,21 +618,15 @@
     const form = document.getElementById("modalForm");
     document.getElementById("modalTitle").textContent = (editId ? "Edit " : "Add ") + cfg.label;
 
-    const existing = editId ? cache[key][editId] : {};
+    let existing = editId ? { ...cache[key][editId] } : {};
+    if (cfg.loadExtra) existing = cfg.loadExtra(existing);
+
     form.innerHTML = cfg.fields.map(f => {
       const val = escapeHtml(existing[f.key] ?? "");
-      if (f.type === "textarea") {
-        return `<div class="field"><label>${f.label}</label><textarea name="${f.key}">${val}</textarea></div>`;
-      }
-      if (f.type === "select") {
-        return `<div class="field"><label>${f.label}</label><select name="${f.key}">${f.options.map(o => `<option value="${o}" ${existing[f.key]===o?'selected':''}>${o}</option>`).join("")}</select></div>`;
-      }
+      if (f.type === "textarea") return `<div class="field"><label>${f.label}</label><textarea name="${f.key}">${val}</textarea></div>`;
+      if (f.type === "select") return `<div class="field"><label>${f.label}</label><select name="${f.key}">${f.options.map(o=>`<option value="${o}" ${existing[f.key]===o?'selected':''}>${o}</option>`).join("")}</select></div>`;
       return `<div class="field"><label>${f.label}</label><input type="text" name="${f.key}" value="${val}" ${f.required?'required':''}></div>`;
-    }).join("") + `
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
-        <button type="submit" class="btn-add">${editId ? "Save Changes" : "Add"}</button>
-      </div>`;
+    }).join("") + `<div class="modal-actions"><button type="button" class="btn-cancel" id="modalCancel">Cancel</button><button type="submit" class="btn-add">${editId?"Save Changes":"Add"}</button></div>`;
 
     overlay.classList.add("show");
     document.getElementById("modalCancel").addEventListener("click", () => overlay.classList.remove("show"));
@@ -469,60 +638,340 @@
       cfg.fields.forEach(f => data[f.key] = fd.get(f.key));
       if (cfg.onSave) data = cfg.onSave(data);
       try {
-        if (editId) {
-          await updateDoc(doc(db, collectionName(key), editId), data);
-          showToast(cfg.label + " updated.");
-        } else {
-          await addDoc(collection(db, collectionName(key)), data);
-          showToast(cfg.label + " added.");
-        }
+        if (editId) { await updateDoc(doc(db, cfg.collection, editId), data); showToast(cfg.label + " updated."); }
+        else { await addDoc(collection(db, cfg.collection), data); showToast(cfg.label + " added."); }
         overlay.classList.remove("show");
-        loadCollection(key);
-        loadDashboardStats();
-      } catch (err) {
-        showToast("Error: " + err.message);
-      }
+        loadCollection(key); loadDashboardStats();
+      } catch (err) { showToast("Error: " + err.message); }
     };
   }
 
-  document.querySelectorAll("[data-add]").forEach(btn => {
-    btn.addEventListener("click", () => openModal(btn.dataset.add, null));
-  });
-
   async function loadDashboardStats(){
     try {
-      const [n,e,c,u] = await Promise.all([
-        getDocs(collection(db,"news")), getDocs(collection(db,"events")),
-        getDocs(collection(db,"redeemCodes")), getDocs(collection(db,"users"))
-      ]);
+      const cols = ["users","communityPosts","videos","news","events","redeemCodes","weapons","characters","bundles"];
+      const results = await Promise.all(cols.map(c => getDocs(collection(db, c)).catch(() => ({ size:0 }))));
+      const [u,p,v,n,e,c,w,ch,b] = results;
+      document.getElementById("dUsers").textContent = u.size;
+      document.getElementById("dPosts").textContent = p.size;
+      document.getElementById("dVideos").textContent = v.size;
       document.getElementById("dNews").textContent = n.size;
       document.getElementById("dEvents").textContent = e.size;
       document.getElementById("dCodes").textContent = c.size;
-      document.getElementById("dUsers").textContent = u.size;
-    } catch (e) { console.warn("stats failed:", e.message); }
+      document.getElementById("dWeapons").textContent = `${w.size} / ${ch.size} / ${b.size}`;
+      try {
+        const imgList = await listAll(ref(storage, "uploads/"));
+        document.getElementById("dImages").textContent = imgList.items.length;
+      } catch { document.getElementById("dImages").textContent = "0"; }
+    } catch (e) { console.warn("dashboard stats failed:", e.message); }
   }
 
+  async function loadMedia(){
+    const grid = document.getElementById("mediaGrid");
+    grid.innerHTML = `<div class="empty-state">Loading…</div>`;
+    try {
+      const list = await listAll(ref(storage, "uploads/"));
+      if (!list.items.length) { grid.innerHTML = `<div class="empty-state">இன்னும் எதுவும் upload ஆகல.</div>`; return; }
+      const entries = await Promise.all(list.items.map(async (itemRef) => {
+        const url = await getDownloadURL(itemRef);
+        return { name: itemRef.name, url, fullPath: itemRef.fullPath };
+      }));
+      grid.innerHTML = entries.map(en => {
+        const isVideo = /\.(mp4|webm|mov)$/i.test(en.name);
+        return `
+        <div class="media-item bracket" data-path="${escapeHtml(en.fullPath)}">
+          ${isVideo ? `<video src="${en.url}" muted></video>` : `<img src="${en.url}" alt="${escapeHtml(en.name)}">`}
+          <div class="overlay-actions">
+            <button class="icon-btn copy-url" data-url="${escapeHtml(en.url)}" aria-label="Copy URL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+            <button class="icon-btn del del-media" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button>
+          </div>
+        </div>`;
+      }).join("");
+      grid.querySelectorAll(".copy-url").forEach(btn => btn.addEventListener("click", () => { navigator.clipboard.writeText(btn.dataset.url); showToast("Image URL copied!"); }));
+      grid.querySelectorAll(".del-media").forEach(btn => btn.addEventListener("click", async () => {
+        const item = btn.closest(".media-item");
+        if (!confirm("இந்த file-ஐ delete பண்ணனுமா?")) return;
+        try { await deleteObject(ref(storage, item.dataset.path)); item.remove(); showToast("Deleted."); loadDashboardStats(); }
+        catch (e) { showToast("Error: " + e.message); }
+      }));
+    } catch (e) {
+      grid.innerHTML = `<div class="empty-state">Load failed: ${escapeHtml(e.message)}. Storage rules check பண்ணுங்க.</div>`;
+    }
+  }
+
+  document.getElementById("fileInput").addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const bar = document.getElementById("uploadProgress");
+    const fill = document.getElementById("uploadProgressFill");
+    bar.classList.add("show");
+    for (const file of files) {
+      const path = `uploads/${Date.now()}_${file.name}`;
+      const task = uploadBytesResumable(ref(storage, path), file);
+      await new Promise((resolve) => {
+        task.on("state_changed",
+          (snap) => { fill.style.width = Math.round((snap.bytesTransferred/snap.totalBytes)*100) + "%"; },
+          (err) => { showToast("Upload failed: " + err.message); resolve(); },
+          () => resolve()
+        );
+      });
+    }
+    bar.classList.remove("show"); fill.style.width = "0%";
+    e.target.value = "";
+    showToast("Upload complete!");
+    loadMedia(); loadDashboardStats();
+  });
+
+  const HOME_SECTIONS = [
+    { key:"news", label:"Breaking News" }, { key:"redeem", label:"Redeem Codes" },
+    { key:"live", label:"Live Stream" }, { key:"videos", label:"Trending Videos" },
+    { key:"events", label:"Events" }, { key:"tournaments", label:"Tournaments" },
+  ];
+  let homepageSections = {};
+
+  async function loadHomepage(){
+    try {
+      const snap = await getDoc(doc(db, "settings", "homepage"));
+      const d = snap.exists() ? snap.data() : {};
+      document.getElementById("hpHeroTitle").value = d.heroTitle || "";
+      document.getElementById("hpHeroTag").value = d.heroTag || "";
+      document.getElementById("hpHeroImage").value = d.heroImage || "";
+      document.getElementById("hpEventEnd").value = d.eventEndDate || "";
+      homepageSections = d.sections || {};
+    } catch (e) { console.warn("homepage load failed:", e.message); }
+    renderSectionToggles();
+  }
+
+  function renderSectionToggles(){
+    const box = document.getElementById("sectionToggles");
+    box.innerHTML = HOME_SECTIONS.map(s => {
+      const on = homepageSections[s.key] !== false;
+      return `<div class="toggle-row"><div class="name">${s.label}</div><div class="switch ${on?'on':''}" data-key="${s.key}"><div class="knob"></div></div></div>`;
+    }).join("");
+    box.querySelectorAll(".switch").forEach(sw => sw.addEventListener("click", () => {
+      const on = sw.classList.toggle("on");
+      homepageSections[sw.dataset.key] = on;
+    }));
+  }
+
+  document.getElementById("saveHomepageBtn").addEventListener("click", async () => {
+    try {
+      await setDoc(doc(db, "settings", "homepage"), {
+        heroTitle: document.getElementById("hpHeroTitle").value.trim(),
+        heroTag: document.getElementById("hpHeroTag").value.trim(),
+        heroImage: document.getElementById("hpHeroImage").value.trim(),
+        eventEndDate: document.getElementById("hpEventEnd").value,
+        sections: homepageSections,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast("Homepage settings saved!");
+    } catch (e) { showToast("Error: " + e.message); }
+  });
+
+  let communitySubtab = "posts";
+  async function loadCommunity(){
+    const box = document.getElementById("communityPanelContent");
+    box.innerHTML = `<div class="empty-state">Loading…</div>`;
+    try {
+      if (communitySubtab === "posts") {
+        const snap = await getDocs(query(collection(db, "communityPosts"), orderBy("createdAt","desc")));
+        if (snap.empty) { box.innerHTML = `<div class="empty-state">Posts இல்ல.</div>`; return; }
+        box.innerHTML = `<table><thead><tr><th>Author</th><th>Text</th><th>Likes</th><th style="width:60px;">Action</th></tr></thead><tbody>${
+          snap.docs.map(d => { const v=d.data(); return `<tr data-id="${d.id}"><td>${escapeHtml(v.authorName)}</td><td style="max-width:340px;">${escapeHtml((v.text||'').slice(0,120))}</td><td>${v.likeCount||0}</td><td><button class="icon-btn del del-post" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button></td></tr>`; }).join("")
+        }</tbody></table>`;
+        box.querySelectorAll(".del-post").forEach(btn => btn.addEventListener("click", async () => {
+          const id = btn.closest("tr").dataset.id;
+          if (!confirm("இந்த post-ஐ delete பண்ணனுமா?")) return;
+          await deleteDoc(doc(db, "communityPosts", id)); showToast("Post deleted."); loadCommunity(); loadDashboardStats();
+        }));
+      } else if (communitySubtab === "comments") {
+        const snap = await getDocs(query(collection(db, "postComments"), orderBy("createdAt","desc")));
+        if (snap.empty) { box.innerHTML = `<div class="empty-state">Comments இல்ல.</div>`; return; }
+        box.innerHTML = `<table><thead><tr><th>Author</th><th>Comment</th><th style="width:60px;">Action</th></tr></thead><tbody>${
+          snap.docs.map(d => { const v=d.data(); return `<tr data-id="${d.id}"><td>${escapeHtml(v.authorName)}</td><td>${escapeHtml(v.text)}</td><td><button class="icon-btn del del-comment" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button></td></tr>`; }).join("")
+        }</tbody></table>`;
+        box.querySelectorAll(".del-comment").forEach(btn => btn.addEventListener("click", async () => {
+          const id = btn.closest("tr").dataset.id;
+          if (!confirm("இந்த comment-ஐ delete பண்ணனுமா?")) return;
+          await deleteDoc(doc(db, "postComments", id)); showToast("Comment deleted."); loadCommunity();
+        }));
+      } else {
+        const snap = await getDocs(query(collection(db, "users"), where("banned","==",true)));
+        if (snap.empty) { box.innerHTML = `<div class="empty-state">Banned users இல்ல.</div>`; return; }
+        box.innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th style="width:100px;">Action</th></tr></thead><tbody>${
+          snap.docs.map(d => { const v=d.data(); return `<tr data-id="${d.id}"><td>${escapeHtml(v.displayName)}</td><td>${escapeHtml(v.email)}</td><td><button class="btn-sm unban-btn">Unban</button></td></tr>`; }).join("")
+        }</tbody></table>`;
+        box.querySelectorAll(".unban-btn").forEach(btn => btn.addEventListener("click", async () => {
+          const id = btn.closest("tr").dataset.id;
+          await updateDoc(doc(db, "users", id), { banned:false }); showToast("Unbanned."); loadCommunity();
+        }));
+      }
+    } catch (e) { box.innerHTML = `<div class="empty-state">Load failed: ${escapeHtml(e.message)}</div>`; }
+  }
+  document.querySelectorAll("#communitySubtabs button").forEach(btn => btn.addEventListener("click", () => {
+    document.querySelectorAll("#communitySubtabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active"); communitySubtab = btn.dataset.sub; loadCommunity();
+  }));
+
+  document.getElementById("sendNotifBtn").addEventListener("click", async () => {
+    const type = document.getElementById("notifType").value;
+    const title = document.getElementById("notifTitle").value.trim();
+    const desc = document.getElementById("notifDesc").value.trim();
+    if (!title) { showToast("Title போடுங்க."); return; }
+    const btn = document.getElementById("sendNotifBtn");
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      const usersSnap = await getDocs(collection(db, "users"));
+      const uids = usersSnap.docs.map(d => d.id);
+      const CHUNK = 400;
+      for (let i = 0; i < uids.length; i += CHUNK) {
+        const batch = writeBatch(db);
+        uids.slice(i, i+CHUNK).forEach(uid => {
+          const notifRef = doc(collection(db, "notifications"));
+          batch.set(notifRef, { uid, type, title, desc, read:false, createdAt: serverTimestamp() });
+        });
+        await batch.commit();
+      }
+      showToast(`${uids.length} users-க்கு notification அனுப்பப்பட்டது!`);
+      document.getElementById("notifTitle").value = ""; document.getElementById("notifDesc").value = "";
+    } catch (e) { showToast("Error: " + e.message); }
+    btn.disabled = false; btn.textContent = "Send to All Users";
+  });
+
+  let allUsers = [];
   async function loadUsers(){
     const tbody = document.getElementById("usersTable");
     try {
       const snap = await getDocs(collection(db, "users"));
-      if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Users இல்ல.</td></tr>`; return; }
-      tbody.innerHTML = snap.docs.map(d => {
-        const v = d.data();
-        const joined = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleDateString("en-IN") : "—";
-        return `<tr><td>${escapeHtml(v.displayName)}</td><td>${escapeHtml(v.email)}</td><td><span class="pill ${v.role==='admin'?'current':'active'}">${escapeHtml(v.role||'user')}</span></td><td>${joined}</td></tr>`;
-      }).join("");
-    } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Load failed: ${escapeHtml(e.message)}</td></tr>`;
-    }
+      allUsers = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      renderUsers(allUsers);
+    } catch (e) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Load failed: ${escapeHtml(e.message)}</td></tr>`; }
   }
+  function renderUsers(list){
+    const tbody = document.getElementById("usersTable");
+    if (!list.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Users இல்ல.</td></tr>`; return; }
+    tbody.innerHTML = list.map(v => {
+      const joined = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleDateString("en-IN") : "—";
+      return `<tr data-id="${v.id}">
+        <td>${escapeHtml(v.displayName)}</td>
+        <td>${escapeHtml(v.email)}</td>
+        <td><span class="pill ${v.role==='admin'?'admin':'user'}">${escapeHtml(v.role||'user')}</span></td>
+        <td><span class="pill ${v.banned?'banned':'active'}">${v.banned?'Banned':(v.disabled?'Disabled':'Active')}</span></td>
+        <td>${joined}</td>
+        <td>
+          <div class="row-actions">
+            <button class="btn-sm role-toggle" title="Toggle admin role">${v.role==='admin'?'Demote':'Promote'}</button>
+            <button class="btn-sm ban-toggle" title="Ban/unban">${v.banned?'Unban':'Ban'}</button>
+            <button class="icon-btn del del-user" aria-label="Delete profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+
+    tbody.querySelectorAll(".role-toggle").forEach(btn => btn.addEventListener("click", async () => {
+      const id = btn.closest("tr").dataset.id;
+      const u = allUsers.find(x => x.id === id);
+      const newRole = u.role === "admin" ? "user" : "admin";
+      if (!confirm(`${u.displayName}-ஐ ${newRole}-ஆ மாத்தணுமா?`)) return;
+      await updateDoc(doc(db, "users", id), { role: newRole });
+      showToast("Role updated."); loadUsers();
+    }));
+    tbody.querySelectorAll(".ban-toggle").forEach(btn => btn.addEventListener("click", async () => {
+      const id = btn.closest("tr").dataset.id;
+      const u = allUsers.find(x => x.id === id);
+      await updateDoc(doc(db, "users", id), { banned: !u.banned });
+      showToast(u.banned ? "Unbanned." : "Banned."); loadUsers();
+    }));
+    tbody.querySelectorAll(".del-user").forEach(btn => btn.addEventListener("click", async () => {
+      const id = btn.closest("tr").dataset.id;
+      if (!confirm("Firestore profile-ஐ delete பண்ணனுமா? (Auth account தனியா remove பண்ணணும்)")) return;
+      await deleteDoc(doc(db, "users", id));
+      showToast("User profile deleted."); loadUsers(); loadDashboardStats();
+    }));
+  }
+  document.getElementById("userSearch").addEventListener("input", (e) => {
+    const term = e.target.value.trim().toLowerCase();
+    renderUsers(term ? allUsers.filter(u => (u.displayName||'').toLowerCase().includes(term) || (u.email||'').toLowerCase().includes(term)) : allUsers);
+  });
+
+  async function loadSettings(){
+    try {
+      const snap = await getDoc(doc(db, "settings", "site"));
+      const d = snap.exists() ? snap.data() : {};
+      document.getElementById("setSiteName").value = d.siteName || "";
+      document.getElementById("setLogo").value = d.logoUrl || "";
+      document.getElementById("setFavicon").value = d.faviconUrl || "";
+      document.getElementById("setFooter").value = d.footerText || "";
+      document.getElementById("setEmail").value = d.contactEmail || "";
+      document.getElementById("setPhone").value = d.contactPhone || "";
+      document.getElementById("setInsta").value = d.social?.instagram || "";
+      document.getElementById("setYoutube").value = d.social?.youtube || "";
+      document.getElementById("setDiscord").value = d.social?.discord || "";
+      document.getElementById("setTwitter").value = d.social?.twitter || "";
+      document.getElementById("setSeoTitle").value = d.seoTitle || "";
+      document.getElementById("setSeoDesc").value = d.seoDescription || "";
+    } catch (e) { console.warn("settings load failed:", e.message); }
+  }
+  document.getElementById("saveSettingsBtn").addEventListener("click", async () => {
+    try {
+      await setDoc(doc(db, "settings", "site"), {
+        siteName: document.getElementById("setSiteName").value.trim(),
+        logoUrl: document.getElementById("setLogo").value.trim(),
+        faviconUrl: document.getElementById("setFavicon").value.trim(),
+        footerText: document.getElementById("setFooter").value.trim(),
+        contactEmail: document.getElementById("setEmail").value.trim(),
+        contactPhone: document.getElementById("setPhone").value.trim(),
+        social: {
+          instagram: document.getElementById("setInsta").value.trim(),
+          youtube: document.getElementById("setYoutube").value.trim(),
+          discord: document.getElementById("setDiscord").value.trim(),
+          twitter: document.getElementById("setTwitter").value.trim(),
+        },
+        seoTitle: document.getElementById("setSeoTitle").value.trim(),
+        seoDescription: document.getElementById("setSeoDesc").value.trim(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast("Website settings saved!");
+    } catch (e) { showToast("Error: " + e.message); }
+  });
+
+  async function loadAds(){
+    try {
+      const snap = await getDoc(doc(db, "settings", "ads"));
+      const d = snap.exists() ? snap.data() : {};
+      setSwitch("adsEnabledToggle", !!d.enabled);
+      setSwitch("adsHomeToggle", d.home !== false);
+      setSwitch("adsNewsToggle", d.news !== false);
+      document.getElementById("adsClientId").value = d.clientId || "";
+      document.getElementById("adsSlots").value = d.slots || "";
+    } catch (e) { console.warn("ads load failed:", e.message); }
+  }
+  function setSwitch(id, on){ document.getElementById(id).classList.toggle("on", on); }
+  ["adsEnabledToggle","adsHomeToggle","adsNewsToggle"].forEach(id => {
+    document.getElementById(id).addEventListener("click", (e) => e.currentTarget.classList.toggle("on"));
+  });
+  document.getElementById("saveAdsBtn").addEventListener("click", async () => {
+    try {
+      await setDoc(doc(db, "settings", "ads"), {
+        enabled: document.getElementById("adsEnabledToggle").classList.contains("on"),
+        home: document.getElementById("adsHomeToggle").classList.contains("on"),
+        news: document.getElementById("adsNewsToggle").classList.contains("on"),
+        clientId: document.getElementById("adsClientId").value.trim(),
+        slots: document.getElementById("adsSlots").value.trim(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast("Ad settings saved!");
+    } catch (e) { showToast("Error: " + e.message); }
+  });
 
   function initAdmin(){
+    Object.keys(CONFIGS).forEach(key => { buildContentView(key); loadCollection(key); });
     loadDashboardStats();
-    loadCollection("news");
-    loadCollection("events");
-    loadCollection("codes");
+    loadMedia();
+    loadHomepage();
+    loadCommunity();
     loadUsers();
+    loadSettings();
+    loadAds();
 
     document.querySelectorAll(".nav-item[data-view]").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -535,5 +984,7 @@
     });
   }
 </script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.warn("SW register failed:",e.message)));}</script>
 </body>
 </html>
